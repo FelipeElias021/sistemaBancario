@@ -7,4 +7,4 @@ A moeda utilizada é o Eticoin, com símbolo ETC
 Alunos: 
 * [Felipe Elias](https://github.com/FelipeElias021)
 * [Paulo Sergio](https://github.com/Paulooooj)
-* João Henrique Manjabosco
+* [João Henrique Manjabosco](https://github.com/Manjabosco98)
