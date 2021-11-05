@@ -6,13 +6,26 @@
 #include <conio.h>
 #include <ctype.h>
 #include <stdbool.h>
-#include <windows.h> //usar o metodo sleep
+//#include <windows.h> //usar o metodo sleep
 
 /*Consultar saldo - pix - depositar - Investimento - Sair*/
+
+/*
+Coisas a fazer FELIPE:
+- Investimento
+- Verificar se algum dado já foi cadrastado antes.
+    --IDEIA = Botar um if no final verificando, e caso já tenha usado imprimir uma mensagem e apagar os dados
+- Se exedeu os 10 cliente, aumentar o tamanho do vetor 
+*/
+
+/*
+Ao invés de ter uma parte para consultar saldo, ter uma opção mostrar ou não o saldo no menu
+*/
 
 void login();
 void menu();
 void investimento();
+float resgatarDinheiro(float tipo);
 
 int main() {
     //apenas começa o código levando ao login
@@ -28,11 +41,13 @@ struct dados_cliente {
         int conta;
         int senha4;
         float saldo;
-        float investimento;
+        float investimentoFix;
+        float investimentoVar;
     };
 
 struct dados_cliente cliente[10];
 int i_atual = 0, nClientes = 0;
+bool mostrarRenda = true;
 
 void login(){
     int escolhaLogin;
@@ -145,7 +160,8 @@ void login(){
             //os operadores ternários foram usados para imprimir mensagens quando está errado o campo
 
             cliente[nClientes].saldo = 0;
-            cliente[nClientes].investimento = 0;
+            cliente[nClientes].investimentoFix = 0;
+            cliente[nClientes].investimentoVar = 0;
             
             srand(time(NULL));
             //o rand vai pegar um semnte multiplicar por 9999 e depois somar 100.000.000 para ter o mesmo comprimento todos
@@ -166,7 +182,8 @@ void login(){
                 printf("Conta: %d\n",cliente[i].conta);
                 printf("Senha 4 digitos: %d\n",cliente[i].senha4);
                 printf("Saldo: %f\n",cliente[i].saldo);
-                printf("Investimento: %f\n",cliente[i].investimento);
+                printf("Investimento Fixo: %f\n",cliente[i].investimentoFix);
+                printf("Investimento Variavel: %f\n",cliente[i].investimentoVar);
             }
             system("PAUSE");
             login(); //leva de volta a função login, para se fazer o login
@@ -180,7 +197,8 @@ void login(){
             cliente[nClientes].conta =  100000000 + rand() * 9999;
             cliente[nClientes].senha4 = 1234;
             cliente[nClientes].saldo = 0;
-            cliente[nClientes].investimento = 0;
+            cliente[nClientes].investimentoFix = 0;
+            cliente[nClientes].investimentoVar = 0;
             nClientes++;
             strcpy(cliente[nClientes].nome,"paulo\n");
             strcpy(cliente[nClientes].email,"paulosergio@gmail.com");
@@ -189,7 +207,8 @@ void login(){
             cliente[nClientes].conta =  100000000 + rand() * 9999;
             cliente[nClientes].senha4 = 1234;
             cliente[nClientes].saldo = 0;
-            cliente[nClientes].investimento = 0;
+            cliente[nClientes].investimentoFix = 0;
+            cliente[nClientes].investimentoVar = 0;
             nClientes++;
             strcpy(cliente[nClientes].nome,"joao\n");
             strcpy(cliente[nClientes].email,"joaomanjabosco@gmail.com");
@@ -198,7 +217,8 @@ void login(){
             cliente[nClientes].conta =  100000000 + rand() * 9999;
             cliente[nClientes].senha4 = 1234;
             cliente[nClientes].saldo = 0;
-            cliente[nClientes].investimento = 0;
+            cliente[nClientes].investimentoFix = 0;
+            cliente[nClientes].investimentoVar = 0;
             nClientes++;
 
             login();
@@ -222,7 +242,7 @@ void menu(){
     printf("> 5. Sair\n> ");
     do {
         scanf("%d",&escolhaMenu);
-    } while (escolhaMenu <  1 || escolhaMenu > 6);
+    } while (escolhaMenu <  1 || escolhaMenu > 5);
     switch (escolhaMenu) {
         case 1:
             //consultar();
@@ -244,12 +264,84 @@ void menu(){
 }
 
 void investimento() {
+    int escolhaInvestimento;
+    char escolhaResgate[16];
     system("cls");
-    printf("AREA INDISPONIVEL NO MOMENTO\n\nESPERE POR MAIS ATUALIZACOES\n\nMAS TOME AQUI 5 ETICOINS\n");
-    cliente[i_atual].investimento += 5;
-    for (int i = 5; i >= 0; i--) {
-            printf("\nAguarde %d segundos",i);
-            Sleep(1000);
+    printf("Bem vindo ao IETi %s\n",cliente[i_atual].nome);
+    printf("Aqui voce faz investimentos em ETC como seguranca\n\n");
+    if (mostrarRenda == true) { //se o mostrar renda for true vai mostrar a renda 
+        printf("Renda variavel: %.2f ETC\n",cliente[i_atual].investimentoVar);
+        printf("Renda fixa: %.2f ETC\n",cliente[i_atual].investimentoFix);
     }
-    menu();
+    printf("--------------------------------------------------\n");
+    printf("> 1. Renda variavel\n");
+    printf("> 2. Renda Fixa\n");
+    printf("> 3. Resgatar dinheiro\n");
+    if (mostrarRenda == true) { //se for true vai mostrar o saldo e colocar opcção para ocultar
+        printf("> 4. Ocultar saldo\n");
+    } else {
+        printf("> 4. Mostrar saldo\n");
+    }
+    printf("> 5. Voltar ao menu\n> ");
+    scanf("%d",&escolhaInvestimento);
+    switch (escolhaInvestimento) {
+        case 1:
+            //Renda Variavel();
+            cliente[i_atual].investimentoVar += 50; //teste
+            break;
+        case 2:
+            //Renda Fixa();
+            cliente[i_atual].investimentoFix += 50; //teste
+            break;
+        case 3:
+            //resgatarDinheiro();
+            setbuf(stdin, NULL); //limpar para o fgets funcionar
+            printf("\nDeseja resgatar da renda variavel ou fixa?\n");
+            fgets(escolhaResgate, 16,stdin);
+            for (int i = 0; escolhaResgate[i] != '\0'; i++) { //para passar por todos os char da string
+                escolhaResgate[i] = tolower(escolhaResgate[i]);//deixar tudo minúsculo
+            }
+            if (strncmp(escolhaResgate,"variavel",3) == 0) {//se pelo menos as 3 primeiras letras fore var vai vir aqui
+                cliente[i_atual].investimentoVar = resgatarDinheiro(cliente[i_atual].investimentoVar);//chama a funcao e armazena o return no valor do investimento
+            } else if (strncmp(escolhaResgate,"fixa",3) == 0) {
+                cliente[i_atual].investimentoFix = resgatarDinheiro(cliente[i_atual].investimentoFix);
+            } else {
+                printf("\n\nDigite variavel ou fixa.\n");
+                system("PAUSE");
+            }
+            investimento();
+            break;
+        case 4:
+            //trocar a visualização
+            if (mostrarRenda == false) {
+                mostrarRenda = true;
+            } else {
+                mostrarRenda = false;
+            }
+            investimento();
+            break;
+        case 5:
+            menu();
+            break;
+        default:
+            printf("Opção inválida");
+    }
+    investimento();
+}
+
+float resgatarDinheiro(float tipo) {
+    float resgate;
+    printf("\n\nValor do resgate: ");
+    scanf("%f",&resgate);
+    if (resgate > tipo) { //se o resgate for maior que o disponivel n funciona
+        printf("\nValor maior de resgate maior do que disponivel\n");
+        system("PAUSE");
+        investimento();
+    }
+    tipo -= resgate; //o investimento que pode ser variavel e  fixo é diminuido do valor do resgate
+    cliente[i_atual].saldo += resgate; //o saldo é acrescido do valor do resgate
+
+    printf("Tranferencia realizada com sucesso!\n"); //FAZER UMA "NOTA FICAL" E QUEM SABE ENVIAR UM EMAIL
+    system("PAUSE");
+    return tipo; //retornar o tipo que pode ser variavel ou fixo
 }
