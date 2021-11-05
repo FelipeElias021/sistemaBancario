@@ -2,9 +2,9 @@
 
 O trabalho é um sistema bancário que tem a opção de acrescentar cada cliente, fazer um pix, depositar dinheiro, e fazer um investimento.
 
-A moeda utilizada é o Eticoin, com símbolo ET
+A moeda utilizada é o Eticoin, com símbolo ETC
 
 Alunos: 
 * Felipe Elias
-* Paulo
+* Paulo Sergio
 * João Henrique Manjabosco
