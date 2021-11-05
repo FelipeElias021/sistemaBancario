@@ -5,6 +5,6 @@ O trabalho é um sistema bancário que tem a opção de acrescentar cada cliente
 A moeda utilizada é o Eticoin, com símbolo ETC
 
 Alunos: 
-* @ FelipeElias021
-* Paulo Sergio
+* [Felipe Elias] (https://github.com/FelipeElias021)
+* [Paulo Sergio] (https://github.com/Paulooooj)
 * João Henrique Manjabosco
