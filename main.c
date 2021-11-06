@@ -36,11 +36,11 @@ struct dados_cliente {
 struct dados_cliente cliente[10];
 int i_atual = 0, nClientes = 0;
 bool mostrarRenda = true;
-char nomeMaiusculo[41];
+char nomeMaiusculo[41]; //se deixar a var nome main tudo minusculo é mais fácil de comparar para o login, ent essa é para ficar formatado
 
 void login(){
     int escolhaLogin;
-    bool flagEmail, flagSenha, flagValidacao;
+    bool flagEmail, flagSenha, flagValidacao, flagCadastro;
     char validacaoUser[41],validacaoSenha[21];
     system("cls");
     printf("Bem vindo ao Banco ETI!\n");
@@ -95,6 +95,15 @@ void login(){
                     }
                 }
             } while (flagValidacao);
+
+            strcpy(nomeMaiusculo,cliente[i_atual].nome);
+             for (int i = 0; nomeMaiusculo[i] != '\0'; i++) { //para passar por todos os char da string
+                if (i == 0 || nomeMaiusculo[i - 1] == ' ') { //no primeiro char,e se no ultimo for um espaço[i - 1] vai deixar o char upper
+                    nomeMaiusculo[i] = toupper(nomeMaiusculo[i]);
+                } else {
+                    nomeMaiusculo[i] = tolower(nomeMaiusculo[i]);
+                }
+            }
 
             menu(); //leva ao menu
             break;
@@ -154,8 +163,43 @@ void login(){
             //o rand vai pegar um semnte multiplicar por 9999 e depois somar 100.000.000 para ter o mesmo comprimento todos
             cliente[nClientes].conta =  100000000 + rand() * 9999;
 
-            nClientes++; //Incrementa para o proximo cadastro
+            flagCadastro = true; //sempre definir como true
+            for (int i = 0; cliente[i].conta != 0 ;i++){//passa por todos os vetores de clientes
+                if (strcmp(cliente[i - 1].nome, cliente[nClientes].nome) == 0) {
+                    printf("\nCadastro invalido");
+                    printf("\nNome ja cadastrado\n\n");
+                    system("PAUSE");
+                    flagCadastro = false;
+                }
+                if (strcmp(cliente[i - 1].email, cliente[nClientes].email) == 0) {
+                    printf("\nCadastro invalido");
+                    printf("\nEmail ja cadastrado\n\n");
+                    system("PAUSE");
+                    flagCadastro = false;
+                }
+                if (strcmp(cliente[i - 1].cpf, cliente[nClientes].cpf) == 0) {
+                    printf("\nCadastro invalido");
+                    printf("\nCPF ja cadastrado\n\n");
+                    system("PAUSE");
+                    flagCadastro = false;
+                }
+                //se o nome,email ou cpf for igual vai invalidar o cadastro, e definir a flag como false
+                if (flagCadastro == false) {
+                    strcpy(cliente[nClientes].nome, "");
+                    strcpy(cliente[nClientes].cpf, "");
+                    strcpy(cliente[nClientes].senha, "");
+                    strcpy(cliente[nClientes].email, "");
+                    cliente[nClientes].conta = 0;
+                    cliente[nClientes].senha4 = 0;
+                    login();
+                }//se a tag for false é pq algum foi igual então ele vai redefinir todas as variáveis cadastradas e ir para o login para n incrementar no nCliente
+                if (cliente[nClientes].conta == cliente[i - 1].conta) {
+                    srand(time(NULL));
+                    cliente[nClientes].conta =  100000000 + rand() * 9999;
+                } //se a conta for igual(difícil de acontecer) apenas vai definir outra
+            }
 
+            nClientes++; //Incrementa para o proximo cadastro
             login(); //leva de volta a função login, para se fazer o login
             break;
 
@@ -260,7 +304,7 @@ void investimento() {
     int escolhaInvestimento;
     char escolhaResgate[16];
     system("cls");
-    printf("Bem vindo ao IETi %s\n",cliente[i_atual].nome);
+    printf("Bem vindo ao IETi %s\n",nomeMaiusculo);
     printf("Aqui voce faz investimentos em ETC como seguranca\n\n");
     if (mostrarRenda == true) { //se o mostrar renda for true vai mostrar a renda 
         printf("Renda variavel: %.2f ETC\n",cliente[i_atual].investimentoVar);
