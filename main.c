@@ -10,18 +10,6 @@
 
 /*Consultar saldo - pix - depositar - Investimento - Sair*/
 
-/*
-Coisas a fazer FELIPE:
-- Investimento
-- Verificar se algum dado já foi cadrastado antes.
-    --IDEIA = Botar um if no final verificando, e caso já tenha usado imprimir uma mensagem e apagar os dados
-- Se exedeu os 10 cliente, aumentar o tamanho do vetor 
-*/
-
-/*
-Ao invés de ter uma parte para consultar saldo, ter uma opção mostrar ou não o saldo no menu
-*/
-
 void login();
 void menu();
 void investimento();
@@ -43,11 +31,12 @@ struct dados_cliente {
         float saldo;
         float investimentoFix;
         float investimentoVar;
-    };
+};
 
 struct dados_cliente cliente[10];
 int i_atual = 0, nClientes = 0;
 bool mostrarRenda = true;
+char nomeMaiusculo[41];
 
 void login(){
     int escolhaLogin;
@@ -57,9 +46,7 @@ void login(){
     printf("Bem vindo ao Banco ETI!\n");
     printf("> 1. Fazer login\n");
     printf("> 2. Cadastrar novo cliente\n> ");
-    do { //equanto o numero for diferente das opções vai pedir
-        scanf("%d",&escolhaLogin);
-    } while (escolhaLogin != 1 && escolhaLogin != 2 && escolhaLogin != 1024 && escolhaLogin != 3);
+    scanf("%d",&escolhaLogin);
     switch (escolhaLogin) {
         case 1:
             //pedir cpf/nome e senha
@@ -223,6 +210,10 @@ void login(){
 
             login();
             break;
+        default:
+            printf("Opcao Invalida\n");
+            system("PAUSE");
+            login();
     }
     return;
 }
@@ -231,7 +222,7 @@ void menu(){
     int escolhaMenu = 0;
     system("cls");
     printf("           Banco ETI\n\n");
-    printf("Ola %s\n",cliente[i_atual].nome);
+    printf("Ola %s\n",nomeMaiusculo);
     printf("Conta: %d\n",cliente[i_atual].conta);
     printf("--------------------\n");
     printf("        Menu        \n\n");
@@ -240,9 +231,7 @@ void menu(){
     printf("> 3. Depositar\n");
     printf("> 4. Investimento\n");
     printf("> 5. Sair\n> ");
-    do {
-        scanf("%d",&escolhaMenu);
-    } while (escolhaMenu <  1 || escolhaMenu > 5);
+    scanf("%d",&escolhaMenu);
     switch (escolhaMenu) {
         case 1:
             //consultar();
@@ -259,6 +248,10 @@ void menu(){
         case 5:
             login();
             break;
+        default:
+            printf("Opcao Invalida\n");
+            system("PAUSE");
+            menu();
     }
     return;
 }
@@ -274,8 +267,8 @@ void investimento() {
         printf("Renda fixa: %.2f ETC\n",cliente[i_atual].investimentoFix);
     }
     printf("--------------------------------------------------\n");
-    printf("> 1. Renda variavel\n");
-    printf("> 2. Renda Fixa\n");
+    printf("> 1. Investir em renda Variavel\n");
+    printf("> 2. Investir em renda Fixa\n");
     printf("> 3. Resgatar dinheiro\n");
     if (mostrarRenda == true) { //se for true vai mostrar o saldo e colocar opcção para ocultar
         printf("> 4. Ocultar saldo\n");
@@ -324,7 +317,8 @@ void investimento() {
             menu();
             break;
         default:
-            printf("Opção inválida");
+            printf("Opcao Invalida\n");
+            system("PAUSE");
     }
     investimento();
 }
