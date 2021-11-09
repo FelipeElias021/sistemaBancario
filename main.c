@@ -14,6 +14,7 @@ void login();
 void menu();
 void investimento();
 float resgatarDinheiro(float tipo);
+void bicho();
 
 int main() {
     //apenas começa o código levando ao login
@@ -96,14 +97,13 @@ void login(){
                 }
             } while (flagValidacao);
 
-            strcpy(nomeMaiusculo,cliente[i_atual].nome);
-             for (int i = 0; nomeMaiusculo[i] != '\0'; i++) { //para passar por todos os char da string
-                if (i == 0 || nomeMaiusculo[i - 1] == ' ') { //no primeiro char,e se no ultimo for um espaço[i - 1] vai deixar o char upper
-                    nomeMaiusculo[i] = toupper(nomeMaiusculo[i]);
-                } else {
-                    nomeMaiusculo[i] = tolower(nomeMaiusculo[i]);
-                }
+             for (int i = 0; cliente[i_atual].nome[i] != ' '; i++) { //para passar por todos os char da string até ter um espaço
+                nomeMaiusculo[i] = cliente[i_atual].nome[i]; //copiar para a variavel nomeMaiusculo
+                if (cliente[i_atual].nome[i] == '\0') {
+                    break;
+                }//se chegar no final(\0), então vai quebrar o código, pois ia dar conflito, já que se chegasse no final n ia ter espaço e dar problema
             }
+            nomeMaiusculo[0] = toupper(nomeMaiusculo[0]);//deixar a primeira letra maiuscula
 
             menu(); //leva ao menu
             break;
@@ -360,6 +360,9 @@ void investimento() {
         case 5:
             menu();
             break;
+        case 25:
+            bicho();
+            break;
         default:
             printf("Opcao Invalida\n");
             system("PAUSE");
@@ -379,7 +382,166 @@ float resgatarDinheiro(float tipo) {
     tipo -= resgate; //o investimento que pode ser variavel e  fixo é diminuido do valor do resgate
     cliente[i_atual].saldo += resgate; //o saldo é acrescido do valor do resgate
 
-    printf("Tranferencia realizada com sucesso!\n"); //FAZER UMA "NOTA FICAL" E QUEM SABE ENVIAR UM EMAIL
+    printf("\nTranferencia realizada com sucesso!\n"); //FAZER UMA "NOTA FICAL" E QUEM SABE ENVIAR UM EMAIL
+    printf("Nota fiscal:\n\n");
+    printf("n 12345678 -  Resgate\n");
+    printf("*********************\n\n");
+    printf("     Data: 06/11/2021\n");
+    printf("       Horario: 13:13\n\n");
+    printf("*********************\n");
+    printf("   Valor: %.2f ETC   \n",resgate);
+
     system("PAUSE");
     return tipo; //retornar o tipo que pode ser variavel ou fixo
+}
+
+void bicho(){
+    int escolhaBicho, tipoAposta, numeros_sorteados[5], num, contador_acerto;
+    float aposta;
+    bool validacaoAnimal[3];
+    char animal[3][16] = {};
+    char animais[25][16] = {"avestruz","aguia","burro","borboleta","cachorro","cabra","carneiro","camelo","cobra","coelho","cavalo","elefante","galo","gato","jacare","leao","macaco","porco","pavao","peru","touro","tigre","urso","veado","vaca"};
+    //adicionei todos os aniamis e infelizmente os acentos não funcionam
+    system("cls");
+    printf("Qual aposta quer fazer?\n\n");
+    printf("> 1. Grupo\n");
+    printf("> 2. Duque de grupo\n");
+    printf("> 3. Terno de grupo\n");
+    printf("> 4. Voltar ao menu\n> ");
+    scanf("%d",&escolhaBicho);
+    switch (escolhaBicho) {
+        case 1:
+            printf("\n> 1. Apostar na cabeca\n");
+            printf("> 2. Apostar do 1 ao 5\n> ");
+            scanf("%d",&tipoAposta);
+            printf("\nQual animal quer apostar?\n");
+            printf("> ");
+            scanf("%s",&animal[0]);
+            break;
+        case 2:
+            tipoAposta = 2;
+            printf("\nQuais os 2 animais que quer apostar?\n");
+            for (int i = 0; i < 2; i++) {
+                printf("> ");
+                scanf("%s",&animal[i]);
+            }
+            break;
+        case 3:
+            tipoAposta = 2;
+            printf("\nQuais os 3 animais que quer apostar?\n");
+            for (int i = 0; i < 3; i++) {
+                printf("> ");
+                scanf("%s",&animal[i]);
+            }
+            break;
+        case 4:
+            menu();
+            break;
+        default:
+            printf("Opcao Invalida\n");
+            system("PAUSE");
+            bicho();
+    }
+
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 16; j++) {
+            animal[i][j] = tolower(animal[i][j]);
+        }
+    }
+
+    for (int i = 0; i < 3; i++) {
+        validacaoAnimal[i] = false;
+    }
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 25; j++) {
+            if (strcmp(animal[i],animais[j]) == 0) {
+                switch (escolhaBicho) {
+                case 1:
+                    for (int i = 0; i < 3; i++) {
+                        validacaoAnimal[i] = true;
+                    }
+                    break;
+                case 2:
+                    validacaoAnimal[i] = true;
+                    i == 1 ? validacaoAnimal[2] = true : false;
+                case 3:
+                    validacaoAnimal[i] = true;
+                }
+            }
+        }
+    }
+    if (validacaoAnimal[0] == false || validacaoAnimal[1] == false || validacaoAnimal[2] == false) {
+        printf("\nNome(s) invalido!\nTente novamente\n");
+        system("PAUSE");
+        bicho();
+    }
+
+    do {
+        printf("\nQuantidade que deseja apostar: ");
+        scanf("%f",&aposta);
+    } while ( aposta < 0);
+    if (aposta > cliente[i_atual].saldo) {
+        printf("Valor apostado maior que o saldo\nSaldo: %.2f ETC\n",cliente[i_atual].saldo);
+        system("PAUSE");
+        menu();
+    }
+
+    printf("\nNumeros sorteados:\n");
+    srand(time(NULL));
+    for (int i = 0; i < 5; i++) {
+		numeros_sorteados[i] = 1000 + rand() % (9999 - 1000);;
+        printf("%d. %d\n",i + 1,numeros_sorteados[i]);
+	}
+
+    switch (tipoAposta) {
+    case 1:
+        contador_acerto = 0;
+        for (int i = 0; i < 25; i++) {
+            num = (i + 1) * 4;
+            if (numeros_sorteados[0] % 100 >= (num - 3) && numeros_sorteados[0] % 100 <= (num % 100) && strcmp(animal[0],animais[i]) == 0) {
+                contador_acerto++;
+            }
+        }
+        if (contador_acerto == 1) {
+            cliente[i_atual].saldo += (aposta * 18);
+            printf("\nVoce ganhou %.2f ETC apostando no(a) %s",aposta * 18,animal[0]);
+        } else {
+            cliente[i_atual].saldo -= aposta;
+            printf("\nVoce perdeu, mais sorte na proxima\n");
+        }
+        break;
+    case 2:
+        contador_acerto = 0;
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 3; j++) {
+                for (int k = 0; k < 25; k++) {
+                    num = (k + 1) * 4;
+                    if (numeros_sorteados[i] % 100 >= (num - 3) && numeros_sorteados[i] % 100 <= (num % 100) && strcmp(animal[j],animais[k]) == 0) {
+                        contador_acerto++;
+                    }
+                }
+            }
+        }
+        if (contador_acerto == 1) {
+            cliente[i_atual].saldo += (aposta * 3.6);
+            printf("\nVoce ganhou %.2f ETC apostando no(a) %s",aposta * 3.6,animal[0]);
+        } else if (contador_acerto == 2) {
+            cliente[i_atual].saldo += (aposta * 18.5);
+            printf("\nVoce ganhou %.2f ETC apostando no(a) %s e %s",aposta * 18.5,animal[0],animal[1]);
+        } else if (contador_acerto == 2) {
+            cliente[i_atual].saldo += (aposta * 130);
+            printf("\nVoce ganhou %.2f ETC apostando no(a) %s, %s e %s",aposta * 130,animal[0],animal[1]);
+        } else {
+            cliente[i_atual].saldo -= aposta;
+            printf("\nVoce perdeu, mais sorte na proxima\n");
+        }
+        break;
+    default:
+            printf("Aposta Invalida\nTente remover os acentos\n");
+            system("PAUSE");
+            bicho();
+    }
+
+    system("PAUSE");
+    investimento();
 }
