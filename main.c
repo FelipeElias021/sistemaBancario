@@ -411,6 +411,7 @@ void bicho(){
     scanf("%d",&escolhaBicho);
     switch (escolhaBicho) {
         case 1:
+            //perguntar o tipo de aposta e pergunta apenas um animal
             printf("\n> 1. Apostar na cabeca\n");
             printf("> 2. Apostar do 1 ao 5\n> ");
             scanf("%d",&tipoAposta);
@@ -419,22 +420,17 @@ void bicho(){
             scanf("%s",&animal[0]);
             break;
         case 2:
-            tipoAposta = 2;
-            printf("\nQuais os 2 animais que quer apostar?\n");
-            for (int i = 0; i < 2; i++) {
-                printf("> ");
-                scanf("%s",&animal[i]);
-            }
-            break;
         case 3:
+            //vai definir o tipo de aposta como 2 (1 ao 5), e perguntar a quantidade de animais referente a escolha ser 2 e 3
             tipoAposta = 2;
-            printf("\nQuais os 3 animais que quer apostar?\n");
-            for (int i = 0; i < 3; i++) {
+            printf("\nQuais os %d animais que quer apostar?\n",escolhaBicho);
+            for (int i = 0; i < escolhaBicho; i++) {
                 printf("> ");
                 scanf("%s",&animal[i]);
             }
             break;
         case 4:
+            //voltar ao menu
             menu();
             break;
         default:
@@ -443,28 +439,29 @@ void bicho(){
             bicho();
     }
 
+    //deixar todas a letras minusculas, vai passar por todas a letras do primeiro animal e assim em diante
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 16; j++) {
             animal[i][j] = tolower(animal[i][j]);
         }
     }
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) { //definir todas as validações com false
         validacaoAnimal[i] = false;
     }
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) { //comparar o animal[0] digitado com todos os 25, e assim por diante
         for (int j = 0; j < 25; j++) {
-            if (strcmp(animal[i],animais[j]) == 0) {
+            if (strcmp(animal[i],animais[j]) == 0) {//se achar o animal[0] com algum vai entrar, depois o [1] com outro vai entrar e o [2]
                 switch (escolhaBicho) {
-                case 1:
+                case 1: //se a escolha bicho for 1, vai ter apenas 1 animal, então seria apenas um validação animal true, então com esse for eu coloco todos como true
                     for (int i = 0; i < 3; i++) {
                         validacaoAnimal[i] = true;
                     }
                     break;
-                case 2:
+                case 2: //para colocar todos como true se for certo, se o animal[1] for certo ent como true o [2] tbm, assim garantido todos com true 
                     validacaoAnimal[i] = true;
                     i == 1 ? validacaoAnimal[2] = true : false;
-                case 3:
+                case 3: //simples, todos tem que passar para ficar true, como são 2 animais
                     validacaoAnimal[i] = true;
                 }
             }
@@ -474,9 +471,9 @@ void bicho(){
         printf("\nNome(s) invalido!\nTente novamente\n");
         system("PAUSE");
         bicho();
-    }
+    } //se algum for false, com o operador OU ||, ele torna tudo verdadeiro e entra, já se for verdade vai ser falso o if e não entra
 
-    do {
+    do { //o do..while garante que os valores sejam maiores que 0
         printf("\nQuantidade que deseja apostar: ");
         scanf("%f",&aposta);
     } while ( aposta < 0);
@@ -484,8 +481,9 @@ void bicho(){
         printf("Valor apostado maior que o saldo\nSaldo: %.2f ETC\n",cliente[i_atual].saldo);
         system("PAUSE");
         menu();
-    }
+    } //se o saldo do cliente atual for menor que o valor da aposta entra no if
 
+    //define os numeros sorteados, 5 colocando no vetor
     printf("\nNumeros sorteados:\n");
     srand(time(NULL));
     for (int i = 0; i < 5; i++) {
@@ -495,6 +493,7 @@ void bicho(){
 
     switch (tipoAposta) {
     case 1:
+        //se a aposta for na cabeça
         contador_acerto = 0;
         for (int i = 0; i < 25; i++) {
             num = (i + 1) * 4;
@@ -502,15 +501,27 @@ void bicho(){
                 contador_acerto++;
             }
         }
-        if (contador_acerto == 1) {
-            cliente[i_atual].saldo += (aposta * 18);
-            printf("\nVoce ganhou %.2f ETC apostando no(a) %s",aposta * 18,animal[0]);
+        /*Vai passar por todos os animais no vetor.
+        Cada animal recebe 4 números em ordem que compara com as 2 ultimas casas do numero sorteado
+        01,02,03,04 - 05,06,07,08 .... 97,98,99,00.
+        assim pega o resto da divisão de 100 pelo numero sorteado, e vê se é menor que o (index  +1) * 4 e maior que esse calculo - 3
+        para ver se o numero é maior pega o resto da divisão por 100, para o 100 virar 00
+        Ex:
+        indice = 0 - num = (0 + 1) *4 - Intervalo: 4-3= 1 && 4
+        indice = 1 - num = (1 + 1) *4 - Intervalo: 8-3= 5 && 8
+        ...
+        indice = 24 - num = (24 + 1) *4 - Intervalo: 100-3= 97 && 100 (100%100 = 00)
+        E também o animal 0 tem quer ser igual ao indice que representa os animais no vetores*/
+        if (contador_acerto == 1) { //se a condição acima for realizada, vai incrementar na contadora e se for 1 mostrar se ganhou ou n 
+            cliente[i_atual].saldo += (aposta * 18); //vai adicionar ao saldo o valor da aposta * 18
+            printf("\nVoce ganhou %.2f ETC apostando no(a) %s\n",aposta * 18,animal[0]);
         } else {
-            cliente[i_atual].saldo -= aposta;
+            cliente[i_atual].saldo -= aposta; //o saldo vai diminuir do valor da aposta
             printf("\nVoce perdeu, mais sorte na proxima\n");
         }
         break;
     case 2:
+        //se a aposta for do 1 ao 5
         contador_acerto = 0;
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 3; j++) {
@@ -522,15 +533,17 @@ void bicho(){
                 }
             }
         }
-        if (contador_acerto == 1) {
+        /*mesma ideia do caso 1, mas primeiro passa pelo primeiro numero sorteado e animal escolhido pelo todos os animais no vetor
+        apos conferir os primeiros, passa pelos 3 animais escolhidos e depois por todos os numeros sorteados*/
+        if (contador_acerto == 1 && escolhaBicho == 1) { //se o contador tiver apenas 1 e na escolha tiver escolhido para apostar em 1 bixo
             cliente[i_atual].saldo += (aposta * 3.6);
-            printf("\nVoce ganhou %.2f ETC apostando no(a) %s",aposta * 3.6,animal[0]);
-        } else if (contador_acerto == 2) {
+            printf("\nVoce ganhou %.2f ETC apostando no(a) %s\n",aposta * 3.6,animal[0]);
+        } else if (contador_acerto == 2 && escolhaBicho == 2) { //se o contador tiver apenas 2 e na escolha tiver escolhido para apostar em 2 bixo
             cliente[i_atual].saldo += (aposta * 18.5);
-            printf("\nVoce ganhou %.2f ETC apostando no(a) %s e %s",aposta * 18.5,animal[0],animal[1]);
-        } else if (contador_acerto == 2) {
+            printf("\nVoce ganhou %.2f ETC apostando no(a) %s e %s\n",aposta * 18.5,animal[0],animal[1]);
+        } else if (contador_acerto == 3 && escolhaBicho == 3) { //se o contador tiver apenas 3 e na escolha tiver escolhido para apostar em 3 bixo
             cliente[i_atual].saldo += (aposta * 130);
-            printf("\nVoce ganhou %.2f ETC apostando no(a) %s, %s e %s",aposta * 130,animal[0],animal[1]);
+            printf("\nVoce ganhou %.2f ETC apostando no(a) %s, %s e %s\n",aposta * 130,animal[0],animal[1]);
         } else {
             cliente[i_atual].saldo -= aposta;
             printf("\nVoce perdeu, mais sorte na proxima\n");
