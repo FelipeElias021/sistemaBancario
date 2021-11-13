@@ -360,15 +360,15 @@ void menu()
 void deposito()
 {
     float depositoo = 0;
-    int senha1, senha2;
+    int senha;
 
-    printf("Informe o valor que deseja depositar ETC ");
+    printf("\nInforme o valor que deseja depositar: ");
     scanf("%f", &depositoo);
 
     printf("Informe a senha de 4 Digitos: ");
-    scanf("%d", &senha1);
+    scanf("%d", &senha);
 
-    if (senha1 == cliente[i_atual].senha4)
+    if (senha == cliente[i_atual].senha4)
     {
         cliente[i_atual].saldo += depositoo;
         printf("Deposito concluido com sucesso!\n");
@@ -376,9 +376,11 @@ void deposito()
     else
     {
         printf("Senha incorreta, nao foi possivel concluir o deposito!\n");
+        system("PAUSE");
         menu();
     }
 
+    system("PAUSE");
     menu();
     return;
 }
