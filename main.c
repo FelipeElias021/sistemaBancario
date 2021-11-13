@@ -259,34 +259,26 @@ void login()
         // criar clientes para testes
         strcpy(cliente[nClientes].nome, "felipe\n");
         strcpy(cliente[nClientes].email, "felipeelias@gmail.com");
-        strcpy(cliente[nClientes].senha, "12345");
+        strcpy(cliente[nClientes].senha, "Ff12345");
         strcpy(cliente[nClientes].cpf, "12312312344");
-        cliente[nClientes].conta = 100000000 + rand() * 9999;
-        cliente[nClientes].senha4 = 1234;
-        cliente[nClientes].saldo = 0;
-        cliente[nClientes].investimentoFix = 0;
-        cliente[nClientes].investimentoVar = 0;
         nClientes++;
         strcpy(cliente[nClientes].nome, "paulo\n");
         strcpy(cliente[nClientes].email, "paulosergio@gmail.com");
         strcpy(cliente[nClientes].senha, "Pp12345");
         strcpy(cliente[nClientes].cpf, "12345678900");
-        cliente[nClientes].conta = 100000000 + rand() * 9999;
-        cliente[nClientes].senha4 = 1234;
-        cliente[nClientes].saldo = 0;
-        cliente[nClientes].investimentoFix = 0;
-        cliente[nClientes].investimentoVar = 0;
         nClientes++;
         strcpy(cliente[nClientes].nome, "joao\n");
         strcpy(cliente[nClientes].email, "joaomanjabosco@gmail.com");
         strcpy(cliente[nClientes].senha, "Jj12345");
         strcpy(cliente[nClientes].cpf, "98765432100");
-        cliente[nClientes].conta = 100000000 + rand() * 9999;
-        cliente[nClientes].senha4 = 1234;
-        cliente[nClientes].saldo = 0;
-        cliente[nClientes].investimentoFix = 0;
-        cliente[nClientes].investimentoVar = 0;
         nClientes++;
+        for (int i = 0; i < 3; i++) {
+            cliente[i].conta = 100000000 + rand() * 9999;
+            cliente[i].senha4 = 1234;
+            cliente[i].saldo = 0;
+            cliente[i].investimentoFix = 0;
+            cliente[i].investimentoVar = 0;
+        }
 
         login();
         break;
@@ -561,7 +553,7 @@ void bicho()
     { // comparar o animal[0] digitado com todos os 25, e assim por diante
         for (int j = 0; j < 25; j++)
         {
-            if (strcmp(animal[i], animais[j]) == 0)
+            if (strncmp(animal[i], animais[j],3) == 0)
             { // se achar o animal[0] com algum vai entrar, depois o [1] com outro vai entrar e o [2]
                 switch (escolhaBicho)
                 {
