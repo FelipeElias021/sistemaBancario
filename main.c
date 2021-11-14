@@ -6,7 +6,10 @@
 #include <conio.h>
 #include <ctype.h>
 #include <stdbool.h>
-//#include <windows.h> //usar o metodo sleep
+#include <unistd.h>
+#include <pthread.h>
+#define TAXA_FIXA 1.5
+#define TEMPO 60
 
 /*Consultar saldo - pix - depositar - Investimento - Sair*/
 
@@ -16,6 +19,8 @@ void investimento();
 float resgatarDinheiro(float tipo);
 void bicho();
 void deposito();
+void* fixa(void * arg);
+void* variavel(void * arg);
 
 int main()
 {
@@ -38,8 +43,10 @@ struct dados_cliente
 };
 
 struct dados_cliente cliente[10];
+pthread_t newthread1;
+pthread_t newthread2; //criando o pthread
 int i_atual = 0, nClientes = 0;
-bool mostrarRenda = true;
+bool mostrarRenda = true, flagFixa, flagVariavel;
 char nomeMaiusculo[41]; // se deixar a var nome main tudo minusculo é mais fácil de comparar para o login, ent essa é para ficar formatado
 
 void login()
@@ -124,6 +131,14 @@ void login()
             } // se chegar no final(\0), então vai quebrar o código, pois ia dar conflito, já que se chegasse no final n ia ter espaço e dar problema
         }
         nomeMaiusculo[0] = toupper(nomeMaiusculo[0]); // deixar a primeira letra maiuscula
+        if (cliente[i_atual].investimentoVar > 0) {
+            flagVariavel = true;
+            pthread_create(&newthread1, NULL, variavel, NULL); //continuar o investimento se ele for maior que 0
+        }
+        if (cliente[i_atual].investimentoFix > 0) {
+            flagFixa = true;
+            pthread_create(&newthread2, NULL, fixa, NULL); //continuar o investimento se ele for maior que 0
+        }
 
         menu(); // leva ao menu
         break;
@@ -339,6 +354,8 @@ void menu()
         investimento();
         break;
     case 5:
+        flagFixa = false; //quando for sair da conta o investimento para
+        flagVariavel = false;
         login();
         break;
     default:
@@ -381,6 +398,7 @@ void investimento()
 {
     int escolhaInvestimento;
     char escolhaResgate[16];
+    float valor_investido;
     system("cls");
     printf("Bem vindo ao IETi %s\n", nomeMaiusculo);
     printf("Aqui voce faz investimentos em ETC como seguranca\n\n");
@@ -401,20 +419,33 @@ void investimento()
     {
         printf("> 4. Mostrar saldo\n");
     }
-    printf("> 5. Voltar ao menu\n> ");
+    printf("> 5. Atualizar\n");
+    printf("> 6. Voltar ao menu\n> ");
     scanf("%d", &escolhaInvestimento);
     switch (escolhaInvestimento)
     {
     case 1:
-        // Renda Variavel();
-        cliente[i_atual].investimentoVar += 50; // teste
+        flagVariavel = true;
+        pthread_create(&newthread1, NULL, variavel, NULL); //chama a pthread fixa
         break;
     case 2:
-        // Renda Fixa();
-        cliente[i_atual].investimentoFix += 50; // teste
+        printf("\nQual o valor do investimento?\n");
+        scanf("%f",&valor_investido);
+        if (valor_investido > cliente[i_atual].saldo)
+        { // se o valor investido for maior que o disponivel n funciona
+            printf("\nValor maior de resgate maior do que disponivel em saldo\nSaldo: %.2f\n",cliente[i_atual].saldo);
+            system("PAUSE");
+            investimento();
+        }
+        cliente[i_atual].saldo -= valor_investido;
+        cliente[i_atual].investimentoFix += valor_investido; //adicionar o valor na variavel investimentoFix
+        flagFixa = true; //tornar a flag true
+        pthread_create(&newthread2, NULL, fixa, NULL); //chama a pthread fixa
         break;
     case 3:
         // resgatarDinheiro();
+        flagFixa = false; //parar o investimento para o resgate
+        flagVariavel = false;
         setbuf(stdin, NULL); // limpar para o fgets funcionar
         printf("\nDeseja resgatar da renda variavel ou fixa?\n");
         fgets(escolhaResgate, 16, stdin);
@@ -422,18 +453,29 @@ void investimento()
         {                                                   // para passar por todos os char da string
             escolhaResgate[i] = tolower(escolhaResgate[i]); // deixar tudo minúsculo
         }
-        if (strncmp(escolhaResgate, "variavel", 3) == 0)
-        {                                                                                          // se pelo menos as 3 primeiras letras fore var vai vir aqui
+
+        if (strncmp(escolhaResgate, "variavel", 3) == 0) // se pelo menos as 3 primeiras letras fore var vai vir aqui
+        {
+            printf("Renda variavel: %2f ETC\n", cliente[i_atual].investimentoVar);
             cliente[i_atual].investimentoVar = resgatarDinheiro(cliente[i_atual].investimentoVar); // chama a funcao e armazena o return no valor do investimento
         }
         else if (strncmp(escolhaResgate, "fixa", 3) == 0)
         {
+            printf("Renda fixa: %2f ETC\n", cliente[i_atual].investimentoFix);
             cliente[i_atual].investimentoFix = resgatarDinheiro(cliente[i_atual].investimentoFix);
         }
         else
         {
             printf("\n\nDigite variavel ou fixa.\n");
             system("PAUSE");
+        }
+        if (cliente[i_atual].investimentoFix > 0) {
+            flagFixa = true;
+            pthread_create(&newthread2, NULL, fixa, NULL); //se o valor investido ainda for maior que 0, ele continua
+        }
+        if (cliente[i_atual].investimentoVar > 0) {
+            flagVariavel = true;
+            pthread_create(&newthread1, NULL, variavel, NULL); //continuar o investimento se ele for maior que 0
         }
         investimento();
         break;
@@ -450,6 +492,9 @@ void investimento()
         investimento();
         break;
     case 5:
+        investimento();
+        break;
+    case 6:
         menu();
         break;
     case 25:
@@ -460,6 +505,32 @@ void investimento()
         system("PAUSE");
     }
     investimento();
+}
+
+void* variavel(void * arg) {
+    while (1) {
+        sleep(TEMPO); //tempo entre as ações
+        if (flagVariavel == false) {
+            pthread_exit(NULL);
+        } //se a flag for false ela para a pthread
+        cliente[i_atual].investimentoFix += cliente[i_atual].investimentoFix * (TAXA_FIXA/100);
+        
+    }
+
+    return NULL;
+}
+
+void* fixa(void * arg) {
+    while (1) {
+        sleep(TEMPO); //tempo entre as ações
+        if (flagFixa == false) {
+            pthread_exit(NULL);
+        } //se a flag for false ela para a pthread
+        cliente[i_atual].investimentoFix += cliente[i_atual].investimentoFix * (TAXA_FIXA/100);
+        
+    }
+
+    return NULL;
 }
 
 float resgatarDinheiro(float tipo)
