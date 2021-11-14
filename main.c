@@ -45,6 +45,7 @@ struct dados_cliente
 struct dados_cliente cliente[10];
 pthread_t newthread1;
 pthread_t newthread2; //criando o pthread
+float taxa, risco; // variaveis para o investimeto renda variavel
 int i_atual = 0, nClientes = 0;
 bool mostrarRenda = true, flagFixa, flagVariavel;
 char nomeMaiusculo[41]; // se deixar a var nome main tudo minusculo é mais fácil de comparar para o login, ent essa é para ficar formatado
@@ -425,6 +426,36 @@ void investimento()
     switch (escolhaInvestimento)
     {
     case 1:
+        printf("\nQual o valor do investimento?\n");
+        scanf("%f",&valor_investido);
+        if (valor_investido > cliente[i_atual].saldo)
+        { // se o valor investido for maior que o disponivel n funciona
+            printf("\nValor maior de resgate maior do que disponivel em saldo\nSaldo: %.2f\n",cliente[i_atual].saldo);
+            system("PAUSE");
+            investimento();
+        }
+
+        printf("\nQuanto maior o valor da taxa, maior o risco\n");
+        printf("Se voce ja estiver investindo, o valor da taxa e atualizado\n");
+        printf("Taxa (%): ");
+        scanf("%f",&taxa);
+        if (taxa <= 0) { //se o valor da taxa for menor que 0 é inválido
+            printf("\nValor de taxa invalida\n");
+            system("PAUSE");
+            investimento();
+        }
+
+        if (taxa < 30) { //se a taxa for menor que 20%, o risco vai ser de 30 de qualquer jeito
+            risco = 30;
+        } else if(taxa > 90) { //se a taxa for maior que 90%, o risco vai ser de 90 de qualquer jeito
+            risco = 90;
+        } else {
+            risco = taxa;
+        }
+
+        cliente[i_atual].saldo -= valor_investido;
+        cliente[i_atual].investimentoVar += valor_investido;
+
         flagVariavel = true;
         pthread_create(&newthread1, NULL, variavel, NULL); //chama a pthread fixa
         break;
@@ -508,13 +539,30 @@ void investimento()
 }
 
 void* variavel(void * arg) {
+    int aleatorio;
+    srand(time(NULL));
     while (1) {
         sleep(TEMPO); //tempo entre as ações
         if (flagVariavel == false) {
             pthread_exit(NULL);
         } //se a flag for false ela para a pthread
-        cliente[i_atual].investimentoFix += cliente[i_atual].investimentoFix * (TAXA_FIXA/100);
-        
+        sleep(TEMPO);
+        aleatorio = 1 + rand() % 100;
+        if (aleatorio > risco) { // se o numero aleatório for maior que o risco o valor é investido, caso o contrário perde o valor
+            cliente[i_atual].investimentoVar += (cliente[i_atual].investimentoVar * (taxa/100.0)); 
+        } else {
+            cliente[i_atual].investimentoVar -= (cliente[i_atual].investimentoVar * (taxa/100.0));
+        }
+    /*Ex:
+    Se a taxa for 30, tem 70% do numero aleatorio for maior que o risco 
+    Se a taxa for 60, tem 40% do numero aleatorio for maior que o risco 
+    */
+
+        if (cliente[i_atual].investimentoVar < 0.001) { //se o valor for 0.001, a função para
+            cliente[i_atual].investimentoVar == 0;
+            printf("\n\n--- Voce perdeu tudo no investimento ---\n\n");
+            pthread_exit(NULL);
+        }
     }
 
     return NULL;
