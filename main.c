@@ -19,8 +19,9 @@ void investimento();
 float resgatarDinheiro(float investimentoMisto, char tipo);
 void bicho();
 void deposito();
-void* fixa(void * arg);
-void* variavel(void * arg);
+void *fixa(void *arg);
+void *variavel(void *arg);
+void configuracao();
 
 int main()
 {
@@ -42,11 +43,11 @@ struct dados_cliente
     float investimentoVar;
 };
 
-//Variaveis Globais - Felipe
+// Variaveis Globais - Felipe
 struct dados_cliente cliente[10];
 pthread_t newthread1;
-pthread_t newthread2; //criando o pthread
-float taxa, risco; // variaveis para o investimeto renda variavel
+pthread_t newthread2; // criando o pthread
+float taxa, risco;    // variaveis para o investimeto renda variavel
 int i_atual = 0, nClientes = 0, cicloRendaVar = 0;
 bool mostrarRenda = true, flagFixa, flagVariavel;
 char nomeMaiusculo[41]; // se deixar a var nome main tudo minusculo é mais fácil de comparar para o login, ent essa é para ficar formatado
@@ -133,13 +134,15 @@ void login()
             } // se chegar no final(\0), então vai quebrar o código, pois ia dar conflito, já que se chegasse no final n ia ter espaço e dar problema
         }
         nomeMaiusculo[0] = toupper(nomeMaiusculo[0]); // deixar a primeira letra maiuscula
-        if (cliente[i_atual].investimentoVar > 0) {
+        if (cliente[i_atual].investimentoVar > 0)
+        {
             flagVariavel = true;
-            pthread_create(&newthread1, NULL, variavel, NULL); //continuar o investimento se ele for maior que 0
+            pthread_create(&newthread1, NULL, variavel, NULL); // continuar o investimento se ele for maior que 0
         }
-        if (cliente[i_atual].investimentoFix > 0) {
+        if (cliente[i_atual].investimentoFix > 0)
+        {
             flagFixa = true;
-            pthread_create(&newthread2, NULL, fixa, NULL); //continuar o investimento se ele for maior que 0
+            pthread_create(&newthread2, NULL, fixa, NULL); // continuar o investimento se ele for maior que 0
         }
 
         menu(); // leva ao menu
@@ -289,7 +292,8 @@ void login()
         strcpy(cliente[nClientes].senha, "Jj12345");
         strcpy(cliente[nClientes].cpf, "98765432100");
         nClientes++;
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++)
+        {
             cliente[i].conta = 100000000 + rand() * 9999;
             cliente[i].senha4 = 1234;
             cliente[i].saldo = 0;
@@ -332,6 +336,7 @@ void menu()
     printf("> 3. Depositar\n");
     printf("> 4. Investimento\n");
     printf("> 5. Sair\n> ");
+    printf("> 6. configuracao\n> ");
     scanf("%d", &escolhaMenu);
     switch (escolhaMenu)
     {
@@ -356,9 +361,12 @@ void menu()
         investimento();
         break;
     case 5:
-        flagFixa = false; //quando for sair da conta o investimento para
+        flagFixa = false; // quando for sair da conta o investimento para
         flagVariavel = false;
         login();
+        break;
+    case 6:
+        void configuracao();
         break;
     default:
         printf("Opcao Invalida\n");
@@ -428,10 +436,10 @@ void investimento()
     {
     case 1:
         printf("\nQual o valor do investimento?\n");
-        scanf("%f",&valor_investido);
+        scanf("%f", &valor_investido);
         if (valor_investido > cliente[i_atual].saldo)
         { // se o valor investido for maior que o disponivel n funciona
-            printf("\nValor maior de resgate maior do que disponivel em saldo\nSaldo: %.2f\n",cliente[i_atual].saldo);
+            printf("\nValor maior de resgate maior do que disponivel em saldo\nSaldo: %.2f\n", cliente[i_atual].saldo);
             system("PAUSE");
             investimento();
         }
@@ -439,46 +447,52 @@ void investimento()
         printf("\nQuanto maior o valor da taxa, maior o risco\n");
         printf("Se voce ja estiver investindo, o valor da taxa e atualizado\n");
         printf("Taxa (%): ");
-        scanf("%f",&taxa);
-        if (taxa <= 0) { //se o valor da taxa for menor que 0 é inválido
+        scanf("%f", &taxa);
+        if (taxa <= 0)
+        { // se o valor da taxa for menor que 0 é inválido
             printf("\nValor de taxa invalida\n");
             system("PAUSE");
             investimento();
         }
 
-        if (taxa < 30) { //se a taxa for menor que 20%, o risco vai ser de 30 de qualquer jeito
+        if (taxa < 30)
+        { // se a taxa for menor que 20%, o risco vai ser de 30 de qualquer jeito
             risco = 30;
-        } else if(taxa > 90) { //se a taxa for maior que 90%, o risco vai ser de 90 de qualquer jeito
+        }
+        else if (taxa > 90)
+        { // se a taxa for maior que 90%, o risco vai ser de 90 de qualquer jeito
             risco = 90;
-        } else {
+        }
+        else
+        {
             risco = taxa;
         }
 
         cliente[i_atual].saldo -= valor_investido;
         cliente[i_atual].investimentoVar += valor_investido;
 
-        cicloRendaVar = 0; //Como está investindo denovo, a contagem para diminuição de impostos é zerada
+        cicloRendaVar = 0; // Como está investindo denovo, a contagem para diminuição de impostos é zerada
 
         flagVariavel = true;
-        pthread_create(&newthread1, NULL, variavel, NULL); //chama a pthread fixa
+        pthread_create(&newthread1, NULL, variavel, NULL); // chama a pthread fixa
         break;
     case 2:
         printf("\nQual o valor do investimento?\n");
-        scanf("%f",&valor_investido);
+        scanf("%f", &valor_investido);
         if (valor_investido > cliente[i_atual].saldo)
         { // se o valor investido for maior que o disponivel n funciona
-            printf("\nValor maior de resgate maior do que disponivel em saldo\nSaldo: %.2f\n",cliente[i_atual].saldo);
+            printf("\nValor maior de resgate maior do que disponivel em saldo\nSaldo: %.2f\n", cliente[i_atual].saldo);
             system("PAUSE");
             investimento();
         }
         cliente[i_atual].saldo -= valor_investido;
-        cliente[i_atual].investimentoFix += valor_investido; //adicionar o valor na variavel investimentoFix
-        flagFixa = true; //tornar a flag true
-        pthread_create(&newthread2, NULL, fixa, NULL); //chama a pthread fixa
+        cliente[i_atual].investimentoFix += valor_investido; // adicionar o valor na variavel investimentoFix
+        flagFixa = true;                                     // tornar a flag true
+        pthread_create(&newthread2, NULL, fixa, NULL);       // chama a pthread fixa
         break;
     case 3:
         // resgatarDinheiro();
-        flagFixa = false; //parar o investimento para o resgate
+        flagFixa = false; // parar o investimento para o resgate
         flagVariavel = false;
         setbuf(stdin, NULL); // limpar para o fgets funcionar
         printf("\nDeseja resgatar da renda variavel ou fixa?\n");
@@ -503,15 +517,19 @@ void investimento()
             printf("\n\nDigite variavel ou fixa.\n");
             system("PAUSE");
         }
-        
-        if (cliente[i_atual].investimentoFix > 0) {
+
+        if (cliente[i_atual].investimentoFix > 0)
+        {
             flagFixa = true;
-            pthread_create(&newthread2, NULL, fixa, NULL); //se o valor investido ainda for maior que 0, ele continua
-        } 
-        if (cliente[i_atual].investimentoVar > 0) {
+            pthread_create(&newthread2, NULL, fixa, NULL); // se o valor investido ainda for maior que 0, ele continua
+        }
+        if (cliente[i_atual].investimentoVar > 0)
+        {
             flagVariavel = true;
-            pthread_create(&newthread1, NULL, variavel, NULL); //continuar o investimento se ele for maior que 0
-        } else if (cliente[i_atual].investimentoVar == 0) { //se o investimento estiver zerado, seu ciclo é reiniciado
+            pthread_create(&newthread1, NULL, variavel, NULL); // continuar o investimento se ele for maior que 0
+        }
+        else if (cliente[i_atual].investimentoVar == 0)
+        { // se o investimento estiver zerado, seu ciclo é reiniciado
             cicloRendaVar = 0;
         }
 
@@ -545,30 +563,37 @@ void investimento()
     investimento();
 }
 
-void* variavel(void * arg) {
+void *variavel(void *arg)
+{
     int aleatorio;
     srand(time(NULL));
-    while (1) {
-        sleep(TEMPO); //tempo entre as ações
-        if (flagVariavel == false) {
+    while (1)
+    {
+        sleep(TEMPO); // tempo entre as ações
+        if (flagVariavel == false)
+        {
             pthread_exit(NULL);
-        } //se a flag for false ela para a pthread
+        } // se a flag for false ela para a pthread
         sleep(TEMPO);
         aleatorio = 1 + rand() % 100;
-        if (aleatorio > risco) { // se o numero aleatório for maior que o risco o valor é investido, caso o contrário perde o valor
-            cliente[i_atual].investimentoVar += (cliente[i_atual].investimentoVar * (taxa/100.0)); 
-        } else {
-            cliente[i_atual].investimentoVar -= (cliente[i_atual].investimentoVar * (taxa/100.0));
+        if (aleatorio > risco)
+        { // se o numero aleatório for maior que o risco o valor é investido, caso o contrário perde o valor
+            cliente[i_atual].investimentoVar += (cliente[i_atual].investimentoVar * (taxa / 100.0));
         }
-    /*Ex:
-    Se a taxa for 30, tem 70% do numero aleatorio for maior que o risco 
-    Se a taxa for 60, tem 40% do numero aleatorio for maior que o risco 
-    */
+        else
+        {
+            cliente[i_atual].investimentoVar -= (cliente[i_atual].investimentoVar * (taxa / 100.0));
+        }
+        /*Ex:
+        Se a taxa for 30, tem 70% do numero aleatorio for maior que o risco
+        Se a taxa for 60, tem 40% do numero aleatorio for maior que o risco
+        */
 
-        if (cliente[i_atual].investimentoVar < 0.001) { //se o valor for 0.001, a função para
+        if (cliente[i_atual].investimentoVar < 0.001)
+        { // se o valor for 0.001, a função para
             cliente[i_atual].investimentoVar == 0;
             printf("\n\n--- Voce perdeu tudo no investimento ---\n\n");
-            cicloRendaVar = 0; //se o investimento estiver zerado, seu ciclo é reiniciado
+            cicloRendaVar = 0; // se o investimento estiver zerado, seu ciclo é reiniciado
             pthread_exit(NULL);
         }
         cicloRendaVar++;
@@ -577,14 +602,16 @@ void* variavel(void * arg) {
     return NULL;
 }
 
-void* fixa(void * arg) {
-    while (1) {
-        sleep(TEMPO); //tempo entre as ações
-        if (flagFixa == false) {
+void *fixa(void *arg)
+{
+    while (1)
+    {
+        sleep(TEMPO); // tempo entre as ações
+        if (flagFixa == false)
+        {
             pthread_exit(NULL);
-        } //se a flag for false ela para a pthread
-        cliente[i_atual].investimentoFix += cliente[i_atual].investimentoFix * (TAXA_FIXA/100);
-
+        } // se a flag for false ela para a pthread
+        cliente[i_atual].investimentoFix += cliente[i_atual].investimentoFix * (TAXA_FIXA / 100);
     }
 
     return NULL;
@@ -602,13 +629,17 @@ float resgatarDinheiro(float investimentoMisto, char tipo)
         investimento();
     }
     investimentoMisto -= resgate; // o investimento que pode ser variavel e  fixo é diminuido do valor do resgate
-    
-    if (cicloRendaVar <= 17 && tipo == 'v') { // se o investimento é do tipo variavel, e se ciclo for menor ou igual a 17,  gerando assim o imposto, se o ciclo for 0 vai ser de 20%, 1 19%...17 3% a depois 2% fixo
-        imposto = resgate * ((20 - cicloRendaVar)/100.0);
-    } else { //se o ciclo for 18 ou mais, os impostos vão ser fixos de 2%
+
+    if (cicloRendaVar <= 17 && tipo == 'v')
+    { // se o investimento é do tipo variavel, e se ciclo for menor ou igual a 17,  gerando assim o imposto, se o ciclo for 0 vai ser de 20%, 1 19%...17 3% a depois 2% fixo
+        imposto = resgate * ((20 - cicloRendaVar) / 100.0);
+    }
+    else
+    { // se o ciclo for 18 ou mais, os impostos vão ser fixos de 2%
         imposto = resgate * 0.02;
     }
-    if (tipo == 'f') {
+    if (tipo == 'f')
+    {
         imposto = resgate * 0.07;
     }
     resgate -= imposto;
@@ -620,7 +651,7 @@ float resgatarDinheiro(float investimentoMisto, char tipo)
     printf("*********************\n\n");
     printf("     Data: 06/11/2021\n");
     printf("       Horario: 13:13\n\n");
-    printf("Imposto: %.2f ETC\n",imposto);
+    printf("Imposto: %.2f ETC\n", imposto);
     printf("*********************\n");
     printf("   Valor: %.2f ETC   \n", resgate);
 
@@ -692,7 +723,7 @@ void bicho()
     { // comparar o animal[0] digitado com todos os 25, e assim por diante
         for (int j = 0; j < 25; j++)
         {
-            if (strncmp(animal[i], animais[j],3) == 0)
+            if (strncmp(animal[i], animais[j], 3) == 0)
             { // se achar o animal[0] com algum vai entrar, depois o [1] com outro vai entrar e o [2]
                 switch (escolhaBicho)
                 {
@@ -823,4 +854,39 @@ void bicho()
 
     system("PAUSE");
     investimento();
+}
+void configuracao()
+{
+
+    int alterar;
+    printf("Alterar dados!\n");
+    printf(" 1-Nome\n 2-Email\n 3-cpf\n 4-Senha\n");
+    scanf("%d", &alterar);
+    switch (alterar)
+    {
+    case 1:
+        printf("Digite novo nome:");
+        scanf(" %c", cliente[i_atual].nome);
+        printf("Nome alterado com sucesso...\n");
+        break;
+    case 2:
+        printf("Digite o novo Email:");
+        scanf(" %c", cliente[i_atual].email);
+        printf("Email cadastrado com sucesso...");
+        break;
+    case 3:
+        printf("Digite o novo cpf:");
+        scanf(" %c", cliente[i_atual].cpf);
+        printf("CPF cadastrado com sucesso...\n");
+        break;
+    case 4:
+        printf("Digite uma nova senha:");
+        scanf(" %c", cliente[i_atual].senha);
+        printf("Senha alterada com sucesso...\n");
+    default:
+        printf("Opcao invalida....\n");
+        break;
+    }
+    menu();
+    return;
 }
