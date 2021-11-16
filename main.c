@@ -335,8 +335,8 @@ void menu()
     printf("> 2. Pix\n");
     printf("> 3. Depositar\n");
     printf("> 4. Investimento\n");
-    printf("> 5. Sair\n> ");
-    printf("> 6. configuracao\n> ");
+    printf("> 5. configuracao\n");
+    printf("> 6. Sair\n> ");
     scanf("%d", &escolhaMenu);
     switch (escolhaMenu)
     {
@@ -361,12 +361,12 @@ void menu()
         investimento();
         break;
     case 5:
+        configuracao();
+        break;
+    case 6:
         flagFixa = false; // quando for sair da conta o investimento para
         flagVariavel = false;
         login();
-        break;
-    case 6:
-        void configuracao();
         break;
     default:
         printf("Opcao Invalida\n");
@@ -855,6 +855,7 @@ void bicho()
     system("PAUSE");
     investimento();
 }
+
 void configuracao()
 {
 
@@ -866,22 +867,22 @@ void configuracao()
     {
     case 1:
         printf("Digite novo nome:");
-        scanf(" %c", cliente[i_atual].nome);
+        scanf(" %s", cliente[i_atual].nome);
         printf("Nome alterado com sucesso...\n");
         break;
     case 2:
         printf("Digite o novo Email:");
-        scanf(" %c", cliente[i_atual].email);
+        scanf(" %s", cliente[i_atual].email);
         printf("Email cadastrado com sucesso...");
         break;
     case 3:
         printf("Digite o novo cpf:");
-        scanf(" %c", cliente[i_atual].cpf);
+        scanf(" %s", cliente[i_atual].cpf);
         printf("CPF cadastrado com sucesso...\n");
         break;
     case 4:
         printf("Digite uma nova senha:");
-        scanf(" %c", cliente[i_atual].senha);
+        scanf(" %s", cliente[i_atual].senha);
         printf("Senha alterada com sucesso...\n");
     default:
         printf("Opcao invalida....\n");
