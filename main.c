@@ -402,6 +402,7 @@ void menu()
     }
     return;
 }
+
 void pix() {
     system("cls");
     int n;
@@ -429,6 +430,7 @@ void pix() {
         }
     return 0;
 }
+
 void transferencia(){
     system("cls");
     char nome[35], mensagem[25], cpf[12], chavea[12], email[40], celular[12];
@@ -608,6 +610,7 @@ void transferencia(){
     } w1 = 0;// final de transferências
 return;
 }
+
 void minhas_chaves(){
     system("cls");
     int w2, escolha2, escolha3, chavealeatoria;
@@ -681,6 +684,7 @@ void minhas_chaves(){
     
 return;
 }
+
 void favoritos(){
     system("cls");
     int favoritos, w4, cont;
@@ -869,7 +873,6 @@ return;
 }
 
 void informacoes(){
-    int;
     printf("Entre contas do banco nao sera cobrado nenhum valor.\n");
     printf("Transferencia para outros bancos sera cobrado a taxa de 0.0025\n");
     printf("De 30 a 60 minutos para cair o valor da transferencia\n");
