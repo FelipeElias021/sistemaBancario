@@ -31,6 +31,7 @@ void ted();
 void informacoes();
 void backup();
 void pausar();
+void pedirSenha4();
 
 struct dados_cliente
 {
@@ -84,7 +85,8 @@ int main()
         fscanf(arquivo, "%f", &cliente[i].saldo);
         fscanf(arquivo, "%f", &cliente[i].investimentoVar);
         fscanf(arquivo, "%f", &cliente[i].investimentoFix);
-        if (cliente[i].conta != 0) {
+        if (cliente[i].conta != 0)
+        {
             nClientes++;
         }
     }
@@ -94,11 +96,13 @@ int main()
     return 0;
 }
 
-void pausar() {
+void pausar()
+{
     int ch;
-    while ((ch = getchar()) != '\n' && ch != EOF); //limpar o buffer do teclado
+    while ((ch = getchar()) != '\n' && ch != EOF)
+        ; //limpar o buffer do teclado
 
-    printf("\n\nPressione qualquer tecla para continuar.\n");
+    printf("\n\nPressione enter para continuar.\n");
     getchar();
 }
 
@@ -107,10 +111,55 @@ void backup()
     arquivo = fopen("user.txt", "w");
     for (int i = 0; cliente[i].conta != 0; i++)
     {
-        fprintf(arquivo,"%s%s\n%s\n%s\n%d\n%d\n%f\n%f\n%f",cliente[i].nome, cliente[i].cpf, cliente[i].senha, cliente[i].email, cliente[i].conta, cliente[i].senha4, cliente[i].saldo, cliente[i].investimentoVar, cliente[i].investimentoFix);
+        fprintf(arquivo, "%s%s\n%s\n%s\n%d\n%d\n%f\n%f\n%f", cliente[i].nome, cliente[i].cpf, cliente[i].senha, cliente[i].email, cliente[i].conta, cliente[i].senha4, cliente[i].saldo, cliente[i].investimentoVar, cliente[i].investimentoFix);
         nClientes = i + 1;
     }
     fclose(arquivo);
+}
+
+void pedirSenha4()
+{
+    int validacao_senha, tentativas;
+    bool flagSenha4;
+
+    for (tentativas = 3; tentativas >= 0; tentativas--)
+    {
+
+        if (tentativas == 0)
+        {
+            printf("\n\nMuitas tentativas incorretas!");
+            pausar();
+            menu();
+        }
+        flagSenha4 = true;
+        do
+        {
+            printf("\n> Senha de 4 digitos para transacoes: ");
+            scanf("%d", &validacao_senha);
+            if (validacao_senha / 1000 < 1 || validacao_senha / 1000 > 9)
+            {
+                flagSenha4 ? printf("\nSenha deve conter apenas 4 digitos!\n") : false;
+            }
+            else
+            {
+                flagSenha4 = false;
+            }
+            /*vai verificar se tem mesmo 4 digitos, se for digitado pro exemplo 444, a divisão
+            desse número por 1000 é 0..., como a divisão é entre inteiro, e se for tipo 55555,
+            vai ser 55 nesse caso, maior que 9*/
+        } while (flagSenha4);
+        // os operadores ternários foram usados para imprimir mensagens quando está errado o campo
+
+        if (validacao_senha != cliente[i_atual].senha4)
+        {
+            printf("Senha incorreta, nao foi possivel continuar\nTente novamente\n%d tentativas restantes", tentativas - 1);
+            pausar();
+        }
+        else
+        {
+            break;
+        }
+    }
 }
 
 void login()
@@ -1026,6 +1075,8 @@ void investimento()
             investimento();
         }
 
+        pedirSenha4();
+
         if (taxa < 30)
         { // se a taxa for menor que 20%, o risco vai ser de 30 de qualquer jeito
             risco = 30;
@@ -1056,6 +1107,9 @@ void investimento()
             pausar();
             investimento();
         }
+
+        pedirSenha4();
+
         cliente[i_atual].saldo -= valor_investido;
         cliente[i_atual].investimentoFix += valor_investido; // adicionar o valor na variavel investimentoFix
         flagFixa = true;                                     // tornar a flag true
@@ -1063,6 +1117,9 @@ void investimento()
         break;
     case 3:
         // resgatarDinheiro();
+
+        pedirSenha4();
+
         flagFixa = false; // parar o investimento para o resgate
         flagVariavel = false;
         setbuf(stdin, NULL); // limpar para o fgets funcionar
@@ -1329,8 +1386,10 @@ void bicho()
     {
         printf("Valor apostado maior que o saldo\nSaldo: %.2f ETC\n", cliente[i_atual].saldo);
         pausar();
-        menu();
+        bicho();
     } // se o saldo do cliente atual for menor que o valor da aposta entra no if
+
+    pedirSenha4();
 
     // define os numeros sorteados, 5 colocando no vetor
     printf("\nNumeros sorteados:\n");
