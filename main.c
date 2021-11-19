@@ -30,6 +30,7 @@ void menu_ted();
 void ted();
 void informacoes();
 void backup();
+void pausar();
 
 struct dados_cliente
 {
@@ -93,6 +94,14 @@ int main()
     return 0;
 }
 
+void pausar() {
+    int ch;
+    while ((ch = getchar()) != '\n' && ch != EOF); //limpar o buffer do teclado
+
+    printf("\n\nPressione qualquer tecla para continuar.\n");
+    getchar();
+}
+
 void backup()
 {
     arquivo = fopen("user.txt", "w");
@@ -122,7 +131,7 @@ void login()
         if (cliente[0].conta == 0)
         { // se o client 0 n tiver conta ainda, vai pedir o cadrasto, pausando e voltando ao login
             printf("\nCadastre primeiro\n");
-            system("PAUSE");
+            pausar();
             login();
         }
 
@@ -272,21 +281,21 @@ void login()
             {
                 printf("\nCadastro invalido");
                 printf("\nNome ja cadastrado\n\n");
-                system("PAUSE");
+                pausar();
                 flagCadastro = false;
             }
             if (strcmp(cliente[i - 1].email, cliente[nClientes].email) == 0)
             {
                 printf("\nCadastro invalido");
                 printf("\nEmail ja cadastrado\n\n");
-                system("PAUSE");
+                pausar();
                 flagCadastro = false;
             }
             if (strcmp(cliente[i - 1].cpf, cliente[nClientes].cpf) == 0)
             {
                 printf("\nCadastro invalido");
                 printf("\nCPF ja cadastrado\n\n");
-                system("PAUSE");
+                pausar();
                 flagCadastro = false;
             }
             // se o nome,email ou cpf for igual vai invalidar o cadastro, e definir a flag como false
@@ -325,12 +334,12 @@ void login()
             printf("Investimento Fixo: %f\n", cliente[i].investimentoFix);
             printf("Investimento Variavel: %f\n", cliente[i].investimentoVar);
         }
-        system("PAUSE");
+        pausar();
         login(); // leva de volta a função login, para se fazer o login
         break;
     default:
         printf("Opcao Invalida\n");
-        system("PAUSE");
+        pausar();
         login();
     }
     return;
@@ -400,7 +409,7 @@ void menu()
         break;
     default:
         printf("Opcao Invalida\n");
-        system("PAUSE");
+        pausar();
         menu();
     }
     return;
@@ -430,7 +439,7 @@ void pix()
         menu();
         break;
     default:
-        system("PAUSE");
+        pausar();
         menu();
     }
     return;
@@ -469,7 +478,7 @@ void transferencia()
                 if (senha2 != cliente[i_atual].senha4)
                 {
                     printf("Senha incorreta, nao foi possivel concluir o deposito!\n");
-                    system("PAUSE");
+                    pausar();
                     pix();
                 }
                 printf("\n\nTransferencia realizada com sucesso.\n"); // usar todos dessa forma para gerar o comprovante.
@@ -489,7 +498,7 @@ void transferencia()
                 if (senha2 != cliente[i_atual].senha4)
                 {
                     printf("Senha incorreta, nao foi possivel concluir o deposito!\n");
-                    system("PAUSE");
+                    pausar();
                     pix();
                 }
                 printf("\n\nTransferencia realizada com sucesso.\n"); // usar todos dessa forma para gerar o comprovante.
@@ -509,7 +518,7 @@ void transferencia()
                 if (senha2 != cliente[i_atual].senha4)
                 {
                     printf("Senha incorreta, nao foi possivel concluir o deposito!\n");
-                    system("PAUSE");
+                    pausar();
                     pix();
                 }
                 printf("\n\nTransferencia realizada com sucesso.\n"); // usar todos dessa forma para gerar o comprovante.
@@ -529,7 +538,7 @@ void transferencia()
                 if (senha2 != cliente[i_atual].senha4)
                 {
                     printf("Senha incorreta, nao foi possivel concluir o deposito!\n");
-                    system("PAUSE");
+                    pausar();
                     pix();
                 }
                 printf("\n\nTransferencia realizada com sucesso.\n"); // usar todos dessa forma para gerar o comprovante.
@@ -556,7 +565,7 @@ void transferencia()
                     if (senha2 != cliente[i_atual].senha4)
                     {
                         printf("Senha incorreta, nao foi possivel concluir o deposito!\n");
-                        system("PAUSE");
+                        pausar();
                         pix();
                     }
 
@@ -771,7 +780,7 @@ void menu_ted()
         menu();
         break;
     default:
-        system("PAUSE");
+        pausar();
         menu();
     }
     return;
@@ -832,7 +841,7 @@ void ted()
                     if (senha3 != cliente[i_atual].senha4)
                     {
                         printf("Senha incorreta, nao foi possivel concluir o deposito!\n");
-                        system("PAUSE");
+                        pausar();
                         pix();
                     }
                     printf("\nTransferencia realizada com sucesso.\n");
@@ -878,7 +887,7 @@ void ted()
                     if (senha3 != cliente[i_atual].senha4)
                     {
                         printf("Senha incorreta, nao foi possivel concluir o deposito!\n");
-                        system("PAUSE");
+                        pausar();
                         pix();
                     }
                     //colocar um while aqui para fazer com que a pessoa digite a senha até ele acertar
@@ -898,7 +907,7 @@ void ted()
         }
         else
         {
-            system("PAUSE");
+            pausar();
             menu_ted();
         }
         printf("\n-----------------------------------------------------------------------------------------------------------------");
@@ -932,7 +941,7 @@ void informacoes()
     printf("Transferencia para outros bancos sera cobrado a taxa de 0.0025\n");
     printf("De 30 a 60 minutos para cair o valor da transferencia\n");
 
-    system("PAUSE");
+    pausar();
     menu_ted();
     return;
 }
@@ -956,11 +965,11 @@ void deposito()
     else
     {
         printf("Senha incorreta, nao foi possivel concluir o deposito!\n");
-        system("PAUSE");
+        pausar();
         menu();
     }
 
-    system("PAUSE");
+    pausar();
     menu();
     return;
 }
@@ -1002,7 +1011,7 @@ void investimento()
         if (valor_investido > cliente[i_atual].saldo)
         { // se o valor investido for maior que o disponivel n funciona
             printf("\nValor maior de resgate maior do que disponivel em saldo\nSaldo: %.2f\n", cliente[i_atual].saldo);
-            system("PAUSE");
+            pausar();
             investimento();
         }
 
@@ -1013,7 +1022,7 @@ void investimento()
         if (taxa <= 0)
         { // se o valor da taxa for menor que 0 é inválido
             printf("\nValor de taxa invalida\n");
-            system("PAUSE");
+            pausar();
             investimento();
         }
 
@@ -1044,7 +1053,7 @@ void investimento()
         if (valor_investido > cliente[i_atual].saldo)
         { // se o valor investido for maior que o disponivel n funciona
             printf("\nValor maior de resgate maior do que disponivel em saldo\nSaldo: %.2f\n", cliente[i_atual].saldo);
-            system("PAUSE");
+            pausar();
             investimento();
         }
         cliente[i_atual].saldo -= valor_investido;
@@ -1077,7 +1086,7 @@ void investimento()
         else
         {
             printf("\n\nDigite variavel ou fixa.\n");
-            system("PAUSE");
+            pausar();
         }
 
         if (cliente[i_atual].investimentoFix > 0)
@@ -1120,7 +1129,7 @@ void investimento()
         break;
     default:
         printf("Opcao Invalida\n");
-        system("PAUSE");
+        pausar();
     }
     investimento();
 }
@@ -1187,7 +1196,7 @@ float resgatarDinheiro(float investimentoMisto, char tipo)
     if (resgate > investimentoMisto)
     { // se o resgate for maior que o disponivel n funciona
         printf("\nValor maior de resgate maior do que disponivel\n");
-        system("PAUSE");
+        pausar();
         investimento();
     }
     investimentoMisto -= resgate; // o investimento que pode ser variavel e  fixo é diminuido do valor do resgate
@@ -1217,7 +1226,7 @@ float resgatarDinheiro(float investimentoMisto, char tipo)
     printf("*********************\n");
     printf("   Valor: %.2f ETC   \n", resgate);
 
-    system("PAUSE");
+    pausar();
     return investimentoMisto; // retornar o tipo que pode ser variavel ou fixo
 }
 
@@ -1264,7 +1273,7 @@ void bicho()
         break;
     default:
         printf("Opcao Invalida\n");
-        system("PAUSE");
+        pausar();
         bicho();
     }
 
@@ -1307,7 +1316,7 @@ void bicho()
     if (validacaoAnimal[0] == false || validacaoAnimal[1] == false || validacaoAnimal[2] == false)
     {
         printf("\nNome(s) invalido!\nTente novamente\n");
-        system("PAUSE");
+        pausar();
         bicho();
     } // se algum for false, com o operador OU ||, ele torna tudo verdadeiro e entra, já se for verdade vai ser falso o if e não entra
 
@@ -1319,7 +1328,7 @@ void bicho()
     if (aposta > cliente[i_atual].saldo)
     {
         printf("Valor apostado maior que o saldo\nSaldo: %.2f ETC\n", cliente[i_atual].saldo);
-        system("PAUSE");
+        pausar();
         menu();
     } // se o saldo do cliente atual for menor que o valor da aposta entra no if
 
@@ -1410,11 +1419,11 @@ void bicho()
         break;
     default:
         printf("Aposta Invalida\nTente remover os acentos\n");
-        system("PAUSE");
+        pausar();
         bicho();
     }
 
-    system("PAUSE");
+    pausar();
     investimento();
 }
 
