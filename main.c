@@ -866,22 +866,24 @@ void configuracao()
     {
     case 1:
         printf("Digite novo nome:");
-        scanf(" %c", cliente[i_atual].nome);
+        scanf(" %s", cliente[i_atual].nome);
         printf("Nome alterado com sucesso...\n");
         break;
     case 2:
         printf("Digite o novo Email:");
-        scanf(" %c", cliente[i_atual].email);
+        scanf(" %s", cliente[i_atual].email);
         printf("Email cadastrado com sucesso...");
         break;
     case 3:
         printf("Digite o novo cpf:");
-        scanf(" %c", cliente[i_atual].cpf);
+        scanf(" %s", cliente[i_atual].cpf);
         printf("CPF cadastrado com sucesso...\n");
         break;
     case 4:
+        printf("Digite sua senha atual:");
+        scanf("%s", cliente[i_atual].senha4);
         printf("Digite uma nova senha:");
-        scanf(" %c", cliente[i_atual].senha);
+        scanf(" %s", cliente[i_atual].senha4);
         printf("Senha alterada com sucesso...\n");
     default:
         printf("Opcao invalida....\n");
