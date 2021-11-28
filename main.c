@@ -1475,8 +1475,10 @@ void bicho()
 void configuracao()
 {
     int alterar;
+    char senhaValidacao[21];
+    system("cls");
     printf("Alterar dados!\n");
-    printf(" 1-Nome\n 2-Email\n 3-cpf\n 4-Senha\n");
+    printf("> 1. Nome\n> 2. Email\n> 3. cpf\n> 4. Senha\n> 5. Menu\n> ");
     scanf("%d", &alterar);
     switch (alterar)
     {
@@ -1504,8 +1506,8 @@ void configuracao()
     case 4:
         // Senha antiga
         printf("Digite sua senha atual:");
-        scanf("%s", cliente[i_atual].senha);
-        if (cliente[i_atual].senha)
+        scanf(" %s", senhaValidacao);
+        if (strcmp(cliente[i_atual].senha, senhaValidacao) == 0)
         {
             // Senha Nova
             printf("Digite uma nova senha:");
@@ -1514,14 +1516,19 @@ void configuracao()
         }
         else
         {
-            printf("Nova senha nao pode ser igual a antetior!\n");
+            printf("Senha incorreta, voltando.\n");
+            pausar();
+            configuracao();
         }
         break;
+    case 5:
+        menu();
     default:
         printf("Opcao invalida....\n");
         break;
     }
+    pausar();
     backup();
-    menu();
+    configuracao();
     return;
 }
