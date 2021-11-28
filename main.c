@@ -6,7 +6,6 @@
 #include <conio.h>
 #include <ctype.h>
 #include <stdbool.h>
-#include <unistd.h>
 //#include <pthread.h>
 #define TAXA_FIXA 1.5
 #define TEMPO 60
@@ -74,8 +73,8 @@ void transferencia();
 void minhas_chaves();
 void favoritos();
 bool chave_email = false, chave_cpf = false, chave_telefone = false, chave_aleatoria = false, verificar_favoritos = false; // as 4 primeiras usadas para validar chaves criadas em minnhas chaves, e a ultima para validar se adicionou favoritos
-char meutelefone[12];  //usado em minhas chaves para criar minhas chaves
-int chavealeatoria = 0, dfavoritos, cfavoritos;// a primeira usada em minhas chaves para gerar chave aleatoria, e as outras duas para armazenar dados na criação de favotios e não sobrescrever
+char meutelefone[12];                                                                                                      //usado em minhas chaves para criar minhas chaves
+int chavealeatoria = 0, dfavoritos, cfavoritos;                                                                            // a primeira usada em minhas chaves para gerar chave aleatoria, e as outras duas para armazenar dados na criação de favotios e não sobrescrever
 
 FILE *arquivo;
 
@@ -508,196 +507,204 @@ void transferencia()
     char nome[35], mensagem[40], chavea[12], celular[12];
     int w1 = 0, escolha1, saldo, vt, cont = 0, escolhasfavoritos, senha2, i, j = 0;
     bool verificar_emailecpf = true;
-    
+
     // vai ter ligação com a parte do João
-        system("cls");
-        printf("Saldo disponivel em sua conta R$ %.2f\n", cliente[i_atual].saldo);
-        printf("Informe o valor da transferencia R$ ");
-        scanf("%d", &vt);
-        if (vt < cliente[i_atual].saldo && vt > 0)
+    system("cls");
+    printf("Saldo disponivel em sua conta R$ %.2f\n", cliente[i_atual].saldo);
+    printf("Informe o valor da transferencia R$ ");
+    scanf("%d", &vt);
+    if (vt < cliente[i_atual].saldo && vt > 0)
+    {
+        setbuf(stdin, NULL);
+        printf("Qual o nome da pessoa que vai receber o pix: ");
+        fgets(nome, 40, stdin);
+        setbuf(stdin, NULL);
+        printf("Escreva uma mensagem: ");
+        fgets(mensagem, 40, stdin);
+        printf("\n Qual o tipo de Chave? Pix \n1-E-mail \n2-CPF/CNPJ \n3-chave pix \n4-Numero celular\n5-Favoritos \n");
+        scanf("%d", &escolha1);
+
+        switch (escolha1)
         {
+        case 1:
             setbuf(stdin, NULL);
-            printf("Qual o nome da pessoa que vai receber o pix: ");
-            fgets(nome, 40, stdin);
-            setbuf(stdin, NULL);
-            printf("Escreva uma mensagem: ");
-            fgets(mensagem, 40, stdin);
-            printf("\n Qual o tipo de Chave? Pix \n1-E-mail \n2-CPF/CNPJ \n3-chave pix \n4-Numero celular\n5-Favoritos \n");
-            scanf("%d", &escolha1);
-
-            switch (escolha1)
+            do
             {
-            case 1:
-                setbuf(stdin, NULL);
-                do{
-                    printf("Informe o email:\n");
-                    fgets(verificacao[0].email, 40, stdin);
-                    for(i = 0; verificacao[0].email[i] != '\0'; i++){
-                        if(verificacao[0].email[i] == '@'){
-                            verificar_emailecpf = false;
-                            }
-                        }
-                        if(j == 2){
-                            pausar();
-                            pix();
-                        }
-                        j++;
-                }while(verificar_emailecpf);
-                pedirSenha4();
-                system("cls");
-                printf("\n\nTransferencia realizada com sucesso.\n"); // usar todos dessa forma para gerar o comprovante.
-                printf("\n -- Comprovante --\n");
-                printf("%s", mensagem);
-                printf("Enviadado para %s", nome);
-                printf("Chave pix %s", verificacao[0].email);
-                printf("No valor de R$%d reais.", vt);
-                printf("\nObrigado por usar o ETI.");
-                cliente[i_atual].saldo = cliente[i_atual].saldo - vt;
-                break;
-            case 2:
-                setbuf(stdin, NULL);
-                do{
-                    printf("Informe o cpf:\n");
-                    scanf(" %s", &verificacao[1].cpf);
-                    strlen(verificacao[1].cpf) != 11 ? printf("Erro cpf nao tem 11 numeros, digitar novamente.\n") : false;
-                        if(j == 2){
-                            pausar();
-                            pix();
-                        }
-                        j++;
-                }while(strlen(verificacao[1].cpf) != 11);
-                pedirSenha4();
-                system("cls");
-                printf("\n\nTransferencia realizada com sucesso.\n"); // usar todos dessa forma para gerar o comprovante.
-                printf("\n -- Comprovante --\n");
-                printf("%s", mensagem);
-                printf("Enviadado para %s", nome);
-                printf("Chave pix %s\n", verificacao[1].cpf);
-                printf("No valor de R$%d reais.", vt);
-                printf("\nObrigado por usar o ETI.");
-                cliente[i_atual].saldo = cliente[i_atual].saldo - vt;
-                break;
-
-            case 3:
-                setbuf(stdin, NULL);
-                printf("Informe a chave pix: ");
-                fgets(chavea, 12, stdin);
-                pedirSenha4();
-                system("cls");
-                printf("\n\nTransferencia realizada com sucesso.\n"); // usar todos dessa forma para gerar o comprovante.
-                printf("\n -- Comprovante --\n");
-                printf("%s", mensagem);
-                printf("Enviadado para %s", nome);
-                printf("Chave pix %s", chavea);
-                printf("No valor de R$%d reais.", vt);
-                printf("\nObrigado por usar o ETI.");
-                cliente[i_atual].saldo = cliente[i_atual].saldo - vt;
-                break;
-
-            case 4:
-                setbuf(stdin, NULL);
-                printf("Informe O numero do celular com o dd +55 ");
-                fgets(celular, 12, stdin);
-                pedirSenha4();
-                system("cls");
-                printf("\n\nTransferencia realizada com sucesso.\n"); // usar todos dessa forma para gerar o comprovante.
-                printf("\n -- Comprovante --\n");
-                printf("%s", mensagem);
-                printf("Enviadado para %s", nome);
-                printf("Chave pix %s", celular);
-                printf("\nNo valor de R$ %d reais.", vt);
-                printf("\nObrigado por usar o ETI.");
-                cliente[i_atual].saldo = cliente[i_atual].saldo - vt;
-                break;
-
-            case 5:
-                if (verificar_favoritos)
+                printf("Informe o email:\n");
+                fgets(verificacao[0].email, 40, stdin);
+                for (i = 0; verificacao[0].email[i] != '\0'; i++)
                 {
-                    system("cls");
-                    printf("\n -- Favoritos --\n\n");
-                    for (cont = 0; cont < dfavoritos; cont++)
+                    if (verificacao[0].email[i] == '@')
                     {
-                        printf("%d-%s", cont + 1, cartao.nome[cont]);
-                        printf("%s\n\n", cartao.chave[cont]);
-                    }
-                    printf("Escolha um contato para fazer transferencia: ");
-                    scanf("%d", &escolhasfavoritos);
-                    pedirSenha4();
-                    system("cls");
-
-                    switch (escolhasfavoritos)
-                    {
-                    case 1:
-                        printf("\n\nTransferencia realizada com sucesso.\n");
-                        printf("\n -- Comprovante --\n");
-                        printf("%s", mensagem);
-                        printf("Enviadado para %s", cartao.nome[0]);
-                        printf("Chave pix %s", cartao.chave[0]);
-                        printf("\nNo valor de R$ %d reais.", vt);
-                        printf("\nObrigado por usar o ETI.");
-                        cliente[i_atual].saldo = cliente[i_atual].saldo - vt;
-                        break;
-                    case 2:
-                        printf("\n\nTransferencia realizada com sucesso.\n");
-                        printf("\n -- Comprovante --\n");
-                        printf("%s", mensagem);
-                        printf("Enviadado para %s", cartao.nome[1]);
-                        printf("Chave pix %s", cartao.chave[1]);
-                        printf("\nNo valor de R$ %d reais.", vt);
-                        printf("\nObrigado por usar o ETI.");
-                        cliente[i_atual].saldo = cliente[i_atual].saldo - vt;
-                        break;
-                    case 3:
-                        printf("\n\nTransferencia realizada com sucesso.\n");
-                        printf("\n -- Comprovante --\n");
-                        printf("%s", mensagem);
-                        printf("Envidado para %s", cartao.nome[2]);
-                        printf("Chave pix %s", cartao.chave[2]);
-                        printf("\nNo valor de R$ %d reais.", vt);
-                        printf("\nObrigado por usar o ETI.");
-                        cliente[i_atual].saldo = cliente[i_atual].saldo - vt;
-                        break;
-                    case 4:
-                        printf("\n\nTransferencia realizada com sucesso.\n");
-                        printf("\n -- Comprovante --\n");
-                        printf("%s", mensagem);
-                        printf("Enviadado para %s", cartao.nome[3]);
-                        printf("Chave pix %s", cartao.chave[3]);
-                        printf("\nNo valor de R$ %d reais.", vt);
-                        printf("\nObrigado por usar o ETI.");
-                        cliente[i_atual].saldo = cliente[i_atual].saldo - vt;
-                        break;
-                    case 5:
-                        printf("\n\nTransferencia realizada com sucesso.\n");
-                        printf("\n -- Comprovante --\n");
-                        printf("%s", mensagem);
-                        printf("Enviadado para %s", cartao.nome[4]);
-                        printf("Chave pix %s", cartao.chave[4]);
-                        printf("\nNo valor de R$ %d reais.", vt);
-                        printf("\nObrigado por usar o ETI.");
-                        cliente[i_atual].saldo = cliente[i_atual].saldo - vt;
-                        break;
+                        verificar_emailecpf = false;
                     }
                 }
-                else
+                if (j == 2)
                 {
-                    printf("Nenhum contanto adicionado aos favoritos");
+                    pausar();
+                    pix();
                 }
-                break;
+                j++;
+            } while (verificar_emailecpf);
+            pedirSenha4();
+            system("cls");
+            printf("\n\nTransferencia realizada com sucesso.\n"); // usar todos dessa forma para gerar o comprovante.
+            printf("\n -- Comprovante --\n");
+            printf("%s", mensagem);
+            printf("Enviadado para %s", nome);
+            printf("Chave pix %s", verificacao[0].email);
+            printf("No valor de R$%d reais.", vt);
+            printf("\nObrigado por usar o ETI.");
+            cliente[i_atual].saldo = cliente[i_atual].saldo - vt;
+            break;
+        case 2:
+            setbuf(stdin, NULL);
+            do
+            {
+                printf("Informe o cpf:\n");
+                scanf(" %s", &verificacao[1].cpf);
+                strlen(verificacao[1].cpf) != 11 ? printf("Erro cpf nao tem 11 numeros, digitar novamente.\n") : false;
+                if (j == 2)
+                {
+                    pausar();
+                    pix();
+                }
+                j++;
+            } while (strlen(verificacao[1].cpf) != 11);
+            pedirSenha4();
+            system("cls");
+            printf("\n\nTransferencia realizada com sucesso.\n"); // usar todos dessa forma para gerar o comprovante.
+            printf("\n -- Comprovante --\n");
+            printf("%s", mensagem);
+            printf("Enviadado para %s", nome);
+            printf("Chave pix %s\n", verificacao[1].cpf);
+            printf("No valor de R$%d reais.", vt);
+            printf("\nObrigado por usar o ETI.");
+            cliente[i_atual].saldo = cliente[i_atual].saldo - vt;
+            break;
 
-            default:
-                printf("Escolha uma existente.");
-                break;
+        case 3:
+            setbuf(stdin, NULL);
+            printf("Informe a chave pix: ");
+            fgets(chavea, 12, stdin);
+            pedirSenha4();
+            system("cls");
+            printf("\n\nTransferencia realizada com sucesso.\n"); // usar todos dessa forma para gerar o comprovante.
+            printf("\n -- Comprovante --\n");
+            printf("%s", mensagem);
+            printf("Enviadado para %s", nome);
+            printf("Chave pix %s", chavea);
+            printf("No valor de R$%d reais.", vt);
+            printf("\nObrigado por usar o ETI.");
+            cliente[i_atual].saldo = cliente[i_atual].saldo - vt;
+            break;
+
+        case 4:
+            setbuf(stdin, NULL);
+            printf("Informe O numero do celular com o dd +55 ");
+            fgets(celular, 12, stdin);
+            pedirSenha4();
+            system("cls");
+            printf("\n\nTransferencia realizada com sucesso.\n"); // usar todos dessa forma para gerar o comprovante.
+            printf("\n -- Comprovante --\n");
+            printf("%s", mensagem);
+            printf("Enviadado para %s", nome);
+            printf("Chave pix %s", celular);
+            printf("\nNo valor de R$ %d reais.", vt);
+            printf("\nObrigado por usar o ETI.");
+            cliente[i_atual].saldo = cliente[i_atual].saldo - vt;
+            break;
+
+        case 5:
+            if (verificar_favoritos)
+            {
+                system("cls");
+                printf("\n -- Favoritos --\n\n");
+                for (cont = 0; cont < dfavoritos; cont++)
+                {
+                    printf("%d-%s", cont + 1, cartao.nome[cont]);
+                    printf("%s\n\n", cartao.chave[cont]);
+                }
+                printf("Escolha um contato para fazer transferencia: ");
+                scanf("%d", &escolhasfavoritos);
+                pedirSenha4();
+                system("cls");
+
+                switch (escolhasfavoritos)
+                {
+                case 1:
+                    printf("\n\nTransferencia realizada com sucesso.\n");
+                    printf("\n -- Comprovante --\n");
+                    printf("%s", mensagem);
+                    printf("Enviadado para %s", cartao.nome[0]);
+                    printf("Chave pix %s", cartao.chave[0]);
+                    printf("\nNo valor de R$ %d reais.", vt);
+                    printf("\nObrigado por usar o ETI.");
+                    cliente[i_atual].saldo = cliente[i_atual].saldo - vt;
+                    break;
+                case 2:
+                    printf("\n\nTransferencia realizada com sucesso.\n");
+                    printf("\n -- Comprovante --\n");
+                    printf("%s", mensagem);
+                    printf("Enviadado para %s", cartao.nome[1]);
+                    printf("Chave pix %s", cartao.chave[1]);
+                    printf("\nNo valor de R$ %d reais.", vt);
+                    printf("\nObrigado por usar o ETI.");
+                    cliente[i_atual].saldo = cliente[i_atual].saldo - vt;
+                    break;
+                case 3:
+                    printf("\n\nTransferencia realizada com sucesso.\n");
+                    printf("\n -- Comprovante --\n");
+                    printf("%s", mensagem);
+                    printf("Envidado para %s", cartao.nome[2]);
+                    printf("Chave pix %s", cartao.chave[2]);
+                    printf("\nNo valor de R$ %d reais.", vt);
+                    printf("\nObrigado por usar o ETI.");
+                    cliente[i_atual].saldo = cliente[i_atual].saldo - vt;
+                    break;
+                case 4:
+                    printf("\n\nTransferencia realizada com sucesso.\n");
+                    printf("\n -- Comprovante --\n");
+                    printf("%s", mensagem);
+                    printf("Enviadado para %s", cartao.nome[3]);
+                    printf("Chave pix %s", cartao.chave[3]);
+                    printf("\nNo valor de R$ %d reais.", vt);
+                    printf("\nObrigado por usar o ETI.");
+                    cliente[i_atual].saldo = cliente[i_atual].saldo - vt;
+                    break;
+                case 5:
+                    printf("\n\nTransferencia realizada com sucesso.\n");
+                    printf("\n -- Comprovante --\n");
+                    printf("%s", mensagem);
+                    printf("Enviadado para %s", cartao.nome[4]);
+                    printf("Chave pix %s", cartao.chave[4]);
+                    printf("\nNo valor de R$ %d reais.", vt);
+                    printf("\nObrigado por usar o ETI.");
+                    cliente[i_atual].saldo = cliente[i_atual].saldo - vt;
+                    break;
+                }
             }
-            // colocar a opção de escrever alguma mensagem e também de gerar um comprovante
-            // se tiver como enviar esse comprovante para o email escolhido
-            pausar();
-            pix();
-        }else{
-            printf("\nSaldo insuficiente.\n");
-            pausar();
-            pix();
+            else
+            {
+                printf("Nenhum contanto adicionado aos favoritos");
+            }
+            break;
+
+        default:
+            printf("Escolha uma existente.");
+            break;
         }
+        // colocar a opção de escrever alguma mensagem e também de gerar um comprovante
+        // se tiver como enviar esse comprovante para o email escolhido
+        pausar();
+        pix();
+    }
+    else
+    {
+        printf("\nSaldo insuficiente.\n");
+        pausar();
+        pix();
+    }
     return;
 }
 
@@ -706,99 +713,105 @@ void minhas_chaves()
     system("cls");
     int w2, escolha2, escolha3, i, j = 0;
     bool verificar_meuemailecpf = true;
-        printf("\n1-Para cadastrar uma nova chave pix \n2-Chaves Cadrastadas \n");
-        scanf("%d", &escolha2);
+    printf("\n1-Para cadastrar uma nova chave pix \n2-Chaves Cadrastadas \n");
+    scanf("%d", &escolha2);
 
-        if (escolha2 == 1)
+    if (escolha2 == 1)
+    {
+        system("cls");
+        printf("\nPermitido cadastrar apenas uma chave pix para cada tipo");
+        printf("\nQual o tipo de Chave deseja cadastrar ? Pix \n1-E-mail \n2-CPF/CNPJ \n3-Numero telefone \n4-Gerar uma chave automatica \n");
+        scanf("%d", &escolha3);
+
+        switch (escolha3)
         {
-            system("cls");
-            printf("\nPermitido cadastrar apenas uma chave pix para cada tipo");
-            printf("\nQual o tipo de Chave deseja cadastrar ? Pix \n1-E-mail \n2-CPF/CNPJ \n3-Numero telefone \n4-Gerar uma chave automatica \n");
-            scanf("%d", &escolha3);
-
-            switch (escolha3)
+        case 1:
+            do
             {
-            case 1:
-                do{
                 setbuf(stdin, NULL);
                 printf("Informe o e-mail: ");
                 fgets(verificacao[2].meuemail, 40, stdin);
-                for(i = 0; verificacao[2].meuemail[i] != '\0'; i++){
-                    if(verificacao[2].meuemail[i] == '@'){
+                for (i = 0; verificacao[2].meuemail[i] != '\0'; i++)
+                {
+                    if (verificacao[2].meuemail[i] == '@')
+                    {
                         verificar_meuemailecpf = false;
                     }
                 }
-                
+
                 j++;
-                if(j == 3){
+                if (j == 3)
+                {
                     pix();
                 }
-                }while(verificar_meuemailecpf); 
-                printf("Email %scadastrado com sucesso.\n", verificacao[2].meuemail);
-                chave_email = true;
-                break;
+            } while (verificar_meuemailecpf);
+            printf("Email %scadastrado com sucesso.\n", verificacao[2].meuemail);
+            chave_email = true;
+            break;
 
-            case 2:
-            do{
+        case 2:
+            do
+            {
                 printf("Informe o cpf:\n");
                 scanf(" %s", &verificacao[3].meucpf);
                 strlen(verificacao[3].meucpf) != 11 ? printf("Erro cpf nao tem 11 numeros, digitar novamente.\n") : false;
-                    if(j == 2){
-                        pausar();
-                        pix();
-                    }
-                        j++;
-                }while(strlen(verificacao[3].meucpf) != 11);
-                printf("Chave %s cadastrada com sucesso.\n", verificacao[3].meucpf);
-                chave_cpf = true;
-                break;
-
-            case 3:
-                setbuf(stdin, NULL);
-                printf("Informe o numero de telefone com dd +55 ");
-                fgets(meutelefone, 12, stdin);
-                printf("Chave %scadastrada com sucesso.\n", meutelefone);
-                chave_telefone = true;
-                break;
-
-            case 4:
-                if (chavealeatoria == 0)
+                if (j == 2)
                 {
-                    chavealeatoria = 100000 + rand() % 10000000000000;
-                    printf("Chave %d cadastrada com sucesso.\n", chavealeatoria);
-                    chave_aleatoria= true;
+                    pausar();
+                    pix();
                 }
-                break;
+                j++;
+            } while (strlen(verificacao[3].meucpf) != 11);
+            printf("Chave %s cadastrada com sucesso.\n", verificacao[3].meucpf);
+            chave_cpf = true;
+            break;
+
+        case 3:
+            setbuf(stdin, NULL);
+            printf("Informe o numero de telefone com dd +55 ");
+            fgets(meutelefone, 12, stdin);
+            printf("Chave %scadastrada com sucesso.\n", meutelefone);
+            chave_telefone = true;
+            break;
+
+        case 4:
+            if (chavealeatoria == 0)
+            {
+                chavealeatoria = 100000 + rand() % 10000000000000;
+                printf("Chave %d cadastrada com sucesso.\n", chavealeatoria);
+                chave_aleatoria = true;
             }
-            // printf("%s", me);
+            break;
         }
-        if (escolha2 == 2)
-        {   system("CLS");
-            printf("\n -- Chaves Cadastradas --\n");
-            if (chave_cpf)
-            { // alterar a parte de comparação
-                printf("\n%s\n", verificacao[3].meucpf);
-            }
-            if (chave_aleatoria)
-            {
-                printf("%d\n", chavealeatoria);
-            }
-            if (chave_email)
-            { // não é uma comparação muito eficiente;
-                printf("%s\n", verificacao[2].meuemail);
-            }
-            if (chave_telefone)
-            {
-                printf("%s\n", meutelefone);
-            }
-            if (chave_cpf == false && chave_email == false && chave_aleatoria == false && chave_telefone == false)
-            {
-                printf("Nao tem nenhuma chave cadastrada!!\n");
-            }
+        // printf("%s", me);
+    }
+    if (escolha2 == 2)
+    {
+        system("CLS");
+        printf("\n -- Chaves Cadastradas --\n");
+        if (chave_cpf)
+        { // alterar a parte de comparação
+            printf("\n%s\n", verificacao[3].meucpf);
         }
-        pausar();
-        pix();
-    
+        if (chave_aleatoria)
+        {
+            printf("%d\n", chavealeatoria);
+        }
+        if (chave_email)
+        { // não é uma comparação muito eficiente;
+            printf("%s\n", verificacao[2].meuemail);
+        }
+        if (chave_telefone)
+        {
+            printf("%s\n", meutelefone);
+        }
+        if (chave_cpf == false && chave_email == false && chave_aleatoria == false && chave_telefone == false)
+        {
+            printf("Nao tem nenhuma chave cadastrada!!\n");
+        }
+    }
+    pausar();
+    pix();
 
     return;
 }
@@ -807,11 +820,12 @@ void favoritos()
 {
     system("cls");
     int favoritos, w4, cont;
-        system("cls");
-        printf("No maximo pode ser adicionados 5 contatos aos favoritos.\n");
-        printf("Informe quantos contatos vai adicionar aos favoritos: ");
-        scanf("%d", &favoritos);
-        if(favoritos <= 5){
+    system("cls");
+    printf("No maximo pode ser adicionados 5 contatos aos favoritos.\n");
+    printf("Informe quantos contatos vai adicionar aos favoritos: ");
+    scanf("%d", &favoritos);
+    if (favoritos <= 5)
+    {
         dfavoritos = dfavoritos + favoritos;
         for (cont = cfavoritos; cont < dfavoritos; cont++)
         {
@@ -826,9 +840,11 @@ void favoritos()
         printf("Contatos adicionados ao favoritos com sucesso.\n");
         pausar();
         pix();
-        }else{
-            pix();
-        }
+    }
+    else
+    {
+        pix();
+    }
 
     return;
 }
@@ -865,92 +881,91 @@ void ted()
     float valort = 0;
     char nome2[10], nome3[30], conta[6];
     // a parte logo abaixo vai receber o nome e o valor para fazer a transferencia
-    
-        printf("Saldo disponivel em sua conta R$ %.2f\n", cliente[i_atual].saldo);
-        printf("Informe o valor a ser transferido: ");
-        scanf("%f", &valort);
-        if (valort < cliente[i_atual].saldo && valort > 0)
+
+    printf("Saldo disponivel em sua conta R$ %.2f\n", cliente[i_atual].saldo);
+    printf("Informe o valor a ser transferido: ");
+    scanf("%f", &valort);
+    if (valort < cliente[i_atual].saldo && valort > 0)
+    {
+        setbuf(stdin, NULL);
+        printf("Informe o nome:");
+        fgets(nome2, 10, stdin);
+
+        for (i = 0; nome2[i] != '\0'; i++)
         {
-            setbuf(stdin, NULL);
-            printf("Informe o nome:");
-            fgets(nome2, 10, stdin);
 
-            for (i = 0; nome2[i] != '\0'; i++)
-            {
-
-                nome2[i] = tolower(nome2[i]);
-            }
-
-            // caso necessário colocar um for para passar todo o nome para minuculo para fazer a comparação
-            // for de comparação atráves do nome para saber se a pessoa tem conta no banco
-            printf("\n");
-            for (i = 0; i < 10; i++)
-            { // altera isso aqui
-
-                if (strncmp(cliente[i].nome, nome2, 3) == 0)
-                {
-                    // informar todas as pessoas com esse nome que tem conta no banco
-                    flag1 = true;
-                    printf("%d-%s", i + 1, cliente[i].nome);
-                    printf("%d\n", cliente[i].conta);
-                }
-            }
-            if (flag1)
-            {
-                // usando flag para se o nome informado tiver no cadastro cair nessa opção, e finalizar a transferencia
-                printf("Digite o numero da pessoa para quem deseja fazer a transfencia:\n");
-                scanf("%d", &n);
-                system("cls");
-                printf("Cliente %s", cliente[n - 1].nome);
-                printf("Conta %d\n", cliente[n - 1].conta);
-                    // finalizar a transferencia e gerar o comprovante
-                    pedirSenha4();
-                    system("cls");
-                    printf("\nTransferencia realizada com sucesso.\n");
-                    printf("\n -- Comprovante --\n");
-                    printf("Enviada para %s", cliente[n - 1].nome);
-                    printf("Numero da conta %d\n", cliente[n - 1].conta);
-                    printf("No valor de R$%.2f reais\n", valort);
-                    printf("Obrigado por usar o ETI.");
-                    cliente[i_atual].saldo = cliente[i_atual].saldo - valort;
-                    pausar();
-                    menu_ted();
-                
-            }
-            else
-            {
-                // caso a pessoa que vai receber não tenha conta no banco
-                system("cls");
-                printf("Essa pessoa nao tem conta no ETI\n");
-                // while aqui
-                printf("Para fazer a transferencia:\n");
-                setbuf(stdin, NULL);
-                printf("Informe o nome do cliente:\n");
-                fgets(nome3, 30, stdin);
-                setbuf(stdin, NULL);
-                printf("Informe o numero da conta:\n");
-                fgets(conta, 6, stdin);
-                printf("\nDados do cliente:\n");
-                for (i = 1; i < 2; i++)
-                {
-                    printf("%s", nome3);
-                    printf("%s\n", conta);
-                }
-
-                    pedirSenha4();
-                    system("cls");
-                    // colocar um while aqui para fazer com que a pessoa digite a senha até ele acertar
-                    printf("\nTransferencia realizada com sucesso.\n");
-                    printf("\n -- Comprovante --\n");
-                    printf("Enviada para %s", nome3);
-                    printf("Numero da conta %s", conta);
-                    printf("No valor de R$%.2f reais\n", valort);
-                    printf("Obrigado por usar o ETI.");
-                    cliente[i_atual].saldo = cliente[i_atual].saldo - (valort + (valort * 0.025));
-                }
+            nome2[i] = tolower(nome2[i]);
         }
-        pausar();
-        menu_ted();
+
+        // caso necessário colocar um for para passar todo o nome para minuculo para fazer a comparação
+        // for de comparação atráves do nome para saber se a pessoa tem conta no banco
+        printf("\n");
+        for (i = 0; i < 10; i++)
+        { // altera isso aqui
+
+            if (strncmp(cliente[i].nome, nome2, 3) == 0)
+            {
+                // informar todas as pessoas com esse nome que tem conta no banco
+                flag1 = true;
+                printf("%d-%s", i + 1, cliente[i].nome);
+                printf("%d\n", cliente[i].conta);
+            }
+        }
+        if (flag1)
+        {
+            // usando flag para se o nome informado tiver no cadastro cair nessa opção, e finalizar a transferencia
+            printf("Digite o numero da pessoa para quem deseja fazer a transfencia:\n");
+            scanf("%d", &n);
+            system("cls");
+            printf("Cliente %s", cliente[n - 1].nome);
+            printf("Conta %d\n", cliente[n - 1].conta);
+            // finalizar a transferencia e gerar o comprovante
+            pedirSenha4();
+            system("cls");
+            printf("\nTransferencia realizada com sucesso.\n");
+            printf("\n -- Comprovante --\n");
+            printf("Enviada para %s", cliente[n - 1].nome);
+            printf("Numero da conta %d\n", cliente[n - 1].conta);
+            printf("No valor de R$%.2f reais\n", valort);
+            printf("Obrigado por usar o ETI.");
+            cliente[i_atual].saldo = cliente[i_atual].saldo - valort;
+            pausar();
+            menu_ted();
+        }
+        else
+        {
+            // caso a pessoa que vai receber não tenha conta no banco
+            system("cls");
+            printf("Essa pessoa nao tem conta no ETI\n");
+            // while aqui
+            printf("Para fazer a transferencia:\n");
+            setbuf(stdin, NULL);
+            printf("Informe o nome do cliente:\n");
+            fgets(nome3, 30, stdin);
+            setbuf(stdin, NULL);
+            printf("Informe o numero da conta:\n");
+            fgets(conta, 6, stdin);
+            printf("\nDados do cliente:\n");
+            for (i = 1; i < 2; i++)
+            {
+                printf("%s", nome3);
+                printf("%s\n", conta);
+            }
+
+            pedirSenha4();
+            system("cls");
+            // colocar um while aqui para fazer com que a pessoa digite a senha até ele acertar
+            printf("\nTransferencia realizada com sucesso.\n");
+            printf("\n -- Comprovante --\n");
+            printf("Enviada para %s", nome3);
+            printf("Numero da conta %s", conta);
+            printf("No valor de R$%.2f reais\n", valort);
+            printf("Obrigado por usar o ETI.");
+            cliente[i_atual].saldo = cliente[i_atual].saldo - (valort + (valort * 0.025));
+        }
+    }
+    pausar();
+    menu_ted();
 
     return;
 }
@@ -1263,7 +1278,7 @@ void bicho()
     int escolhaBicho, tipoAposta, numeros_sorteados[5], num, contador_acerto;
     float aposta;
     bool validacaoAnimal[3];
-    char animal[3][16] = {};
+    char animal[3][16];
     char animais[25][16] = {"avestruz", "aguia", "burro", "borboleta", "cachorro", "cabra", "carneiro", "camelo", "cobra", "coelho", "cavalo", "elefante", "galo", "gato", "jacare", "leao", "macaco", "porco", "pavao", "peru", "touro", "tigre", "urso", "veado", "vaca"};
     // adicionei todos os aniamis e infelizmente os acentos não funcionam
     system("cls");
@@ -1459,7 +1474,6 @@ void bicho()
 
 void configuracao()
 {
-
     int alterar;
     printf("Alterar dados!\n");
     printf(" 1-Nome\n 2-Email\n 3-cpf\n 4-Senha\n");
@@ -1468,8 +1482,14 @@ void configuracao()
     {
     case 1:
         printf("Digite novo nome:");
-        scanf(" %s", cliente[i_atual].nome);
+        setbuf(stdin, NULL); // limpar para o fgets funcionar
+        fgets(cliente[i_atual].nome, 41, stdin);
         printf("Nome alterado com sucesso...\n");
+        
+        for (int i = 0; cliente[i_atual].nome[i] != '\0'; i++)
+        {
+            cliente[i_atual].nome[i] = tolower(cliente[i_atual].nome[i]);
+        } // para deixar as  letras minúsculas
         break;
     case 2:
         printf("Digite o novo Email:");
@@ -1493,6 +1513,7 @@ void configuracao()
         printf("Opcao invalida....\n");
         break;
     }
+    backup();
     menu();
     return;
 }
