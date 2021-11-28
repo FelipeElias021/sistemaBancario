@@ -73,7 +73,7 @@ void transferencia();
 void minhas_chaves();
 void favoritos();
 bool chave_email = false, chave_cpf = false, chave_telefone = false, chave_aleatoria = false, verificar_favoritos = false; // as 4 primeiras usadas para validar chaves criadas em minnhas chaves, e a ultima para validar se adicionou favoritos
-char meutelefone[12];                                                                                                      //usado em minhas chaves para criar minhas chaves
+char meutelefone[12];                                                                                                      // usado em minhas chaves para criar minhas chaves
 int chavealeatoria = 0, dfavoritos, cfavoritos;                                                                            // a primeira usada em minhas chaves para gerar chave aleatoria, e as outras duas para armazenar dados na criação de favotios e não sobrescrever
 
 FILE *arquivo;
@@ -1485,7 +1485,7 @@ void configuracao()
         setbuf(stdin, NULL); // limpar para o fgets funcionar
         fgets(cliente[i_atual].nome, 41, stdin);
         printf("Nome alterado com sucesso...\n");
-        
+
         for (int i = 0; cliente[i_atual].nome[i] != '\0'; i++)
         {
             cliente[i_atual].nome[i] = tolower(cliente[i_atual].nome[i]);
@@ -1505,10 +1505,18 @@ void configuracao()
         // Senha antiga
         printf("Digite sua senha atual:");
         scanf("%s", cliente[i_atual].senha);
-        // Senha Nova
-        printf("Digite uma nova senha:");
-        scanf(" %s", cliente[i_atual].senha);
-        printf("Senha alterada com sucesso...\n");
+        if (cliente[i_atual].senha)
+        {
+            // Senha Nova
+            printf("Digite uma nova senha:");
+            scanf(" %s", cliente[i_atual].senha);
+            printf("Senha alterada com sucesso...\n");
+        }
+        else
+        {
+            printf("Nova senha nao pode ser igual a antetior!\n");
+        }
+        break;
     default:
         printf("Opcao invalida....\n");
         break;
