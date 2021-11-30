@@ -31,6 +31,7 @@ void informacoes();
 void backup();
 void pausar();
 void pedirSenha4();
+void mostrarData();
 
 struct dados_cliente
 {
@@ -167,6 +168,16 @@ void pedirSenha4()
             break;
         }
     }
+}
+
+void mostrarData() {
+    //Pegar datas e horários
+    time_t meuTempo;
+    meuTempo = time(NULL);
+    struct tm tm = *localtime(&meuTempo);
+    //Para utilizar os tempos, usar tm.<código>, para saber todas ver no link http://linguagemc.com.br/exibindo-data-e-hora-com-time-h/
+    printf("       Data: %02d/%02d/%d\n",tm.tm_mday,tm.tm_mon + 1,tm.tm_year + 1900);
+    printf("       Horario: %02d:%02d\n\n",tm.tm_hour,tm.tm_min);
 }
 
 void login()
@@ -1261,10 +1272,9 @@ float resgatarDinheiro(float investimentoMisto, char tipo)
 
     printf("\nTranferencia realizada com sucesso!\n"); // FAZER UMA "NOTA FICAL" E QUEM SABE ENVIAR UM EMAIL
     printf("Nota fiscal:\n\n");
-    printf("n 12345678 -  Resgate\n");
+    printf("n %d    -   Resgate\n",1000 + rand() % (9999 - 1000));
     printf("*********************\n\n");
-    printf("     Data: 06/11/2021\n");
-    printf("       Horario: 13:13\n\n");
+    mostrarData();
     printf("Imposto: %.2f ETC\n", imposto);
     printf("*********************\n");
     printf("   Valor: %.2f ETC   \n", resgate);
