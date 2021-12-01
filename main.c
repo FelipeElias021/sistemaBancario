@@ -31,7 +31,7 @@ void informacoes();
 void backup();
 void pausar();
 void pedirSenha4();
-void mostrarData();
+void notaFiscal(char tipo[20], bool flagImposto, float imposto, float valor);
 
 struct dados_cliente
 {
@@ -81,7 +81,7 @@ FILE *arquivo;
 
 int main()
 {
-    arquivo = fopen("user.txt", "r");
+    arquivo = fopen("user.txt", "r"); //abrir o ponteiro file, no  arquivo user.txt e ler ("r")
     for (int i = 0; i < 10; i++)
     {
         fgets(cliente[i].nome, 41, arquivo);
@@ -93,12 +93,13 @@ int main()
         fscanf(arquivo, "%f", &cliente[i].saldo);
         fscanf(arquivo, "%f", &cliente[i].investimentoVar);
         fscanf(arquivo, "%f", &cliente[i].investimentoFix);
+        //Vai pegar cada linha como um dado
         if (cliente[i].conta != 0)
         {
-            nClientes++;
+            nClientes++; //para cada conta que ele ler, vai add no nClientes para conseguir cadastrar clientes na sequência
         }
     }
-    fclose(arquivo);
+    fclose(arquivo); //fechar para evitar problemas
     // apenas começa o código levando ao login
     login();
     return 0;
@@ -116,11 +117,11 @@ void pausar()
 
 void backup()
 {
-    arquivo = fopen("user.txt", "w");
+    arquivo = fopen("user.txt", "w"); //abrir o ponteiro no modo de esccrito ("w"), vai apagar tudo e escrever por cima
     for (int i = 0; cliente[i].conta != 0; i++)
     {
         fprintf(arquivo, "%s%s\n%s\n%s\n%d\n%d\n%f\n%f\n%f", cliente[i].nome, cliente[i].cpf, cliente[i].senha, cliente[i].email, cliente[i].conta, cliente[i].senha4, cliente[i].saldo, cliente[i].investimentoVar, cliente[i].investimentoFix);
-        nClientes = i + 1;
+        nClientes = i + 1; //Definir o nclientes para o cadastro, agr parece meio redundante mas vou deixar
     }
     fclose(arquivo);
 }
@@ -130,10 +131,10 @@ void pedirSenha4()
     int validacao_senha, tentativas;
     bool flagSenha4;
 
-    for (tentativas = 3; tentativas >= 0; tentativas--)
+    for (tentativas = 3; tentativas >= 0; tentativas--) //Fazer 3 tentativas
     {
 
-        if (tentativas == 0)
+        if (tentativas == 0) //Se o número de tentivas for 0, vai imprimir uma mensagen e voltar ao menu
         {
             printf("\n\nMuitas tentativas incorretas!");
             pausar();
@@ -158,19 +159,25 @@ void pedirSenha4()
         } while (flagSenha4);
         // os operadores ternários foram usados para imprimir mensagens quando está errado o campo
 
-        if (validacao_senha != cliente[i_atual].senha4)
+        if (validacao_senha != cliente[i_atual].senha4) //se a senha for diferente vai imprimir q está incorreto e dar mais x tentivas
         {
             printf("Senha incorreta, nao foi possivel continuar\nTente novamente\n%d tentativas restantes", tentativas - 1);
             pausar();
         }
         else
         {
-            break;
+            break; // vai sair do loop e continuar
         }
     }
 }
 
-void mostrarData() {
+void notaFiscal(char tipo[20], bool flagImposto, float imposto, float valor) {
+    /*Vai pegar o tipo, ex: "Resgate"; se tem imposto ou não, true/false; o valor desse imposto, se for false pode definir como 0;
+    e o valor da transação, do resgate realizado - imposto, depósito ou do pix*/
+    printf("\n\nTranferencia realizada com sucesso!\n");
+    printf("Nota fiscal:\n\n");
+    printf("n %d    -   %s\n",1000 + rand() % (9999 - 1000),tipo); //gerar um num aleatório de 4 casas
+    printf("*********************\n\n");
     //Pegar datas e horários
     time_t meuTempo;
     meuTempo = time(NULL);
@@ -178,6 +185,11 @@ void mostrarData() {
     //Para utilizar os tempos, usar tm.<código>, para saber todas ver no link http://linguagemc.com.br/exibindo-data-e-hora-com-time-h/
     printf("       Data: %02d/%02d/%d\n",tm.tm_mday,tm.tm_mon + 1,tm.tm_year + 1900);
     printf("       Horario: %02d:%02d\n\n",tm.tm_hour,tm.tm_min);
+    if (flagImposto == true) {
+        printf("Imposto: %.2f ETC\n", imposto);
+    }
+    printf("*********************\n");
+    printf("   Valor: %.2f ETC   \n", valor);
 }
 
 void login()
@@ -420,7 +432,7 @@ void menu()
     printf("           Banco ETI\n\n");
     printf("Ola %s\n", nomeMaiusculo);
     printf("Conta: %d\n", cliente[i_atual].conta);
-    if (mostrarRenda == true)
+    if (mostrarRenda == true) //se mostrar renda for true vai mostrar, caso o contrário n
     {
         printf("Saldo: %.2f ETC\n", cliente[i_atual].saldo);
     }
@@ -444,7 +456,7 @@ void menu()
     switch (escolhaMenu)
     {
     case 1:
-        if (mostrarRenda == true)
+        if (mostrarRenda == true) //se for true, vai mudar para false e vice versa
         {
             mostrarRenda = false;
         }
@@ -1270,14 +1282,7 @@ float resgatarDinheiro(float investimentoMisto, char tipo)
     resgate -= imposto;
     cliente[i_atual].saldo += resgate; // o saldo é acrescido do valor do resgate
 
-    printf("\nTranferencia realizada com sucesso!\n"); // FAZER UMA "NOTA FICAL" E QUEM SABE ENVIAR UM EMAIL
-    printf("Nota fiscal:\n\n");
-    printf("n %d    -   Resgate\n",1000 + rand() % (9999 - 1000));
-    printf("*********************\n\n");
-    mostrarData();
-    printf("Imposto: %.2f ETC\n", imposto);
-    printf("*********************\n");
-    printf("   Valor: %.2f ETC   \n", resgate);
+    notaFiscal("Resgate", true, imposto, resgate);
 
     pausar();
     return investimentoMisto; // retornar o tipo que pode ser variavel ou fixo
@@ -1286,7 +1291,7 @@ float resgatarDinheiro(float investimentoMisto, char tipo)
 void bicho()
 {
     int escolhaBicho, tipoAposta, numeros_sorteados[5], num, contador_acerto;
-    float aposta;
+    float aposta, valorFinal; //vai definir o valor para a nota fiscal o valorFinal
     bool validacaoAnimal[3];
     char animal[3][16];
     char animais[25][16] = {"avestruz", "aguia", "burro", "borboleta", "cachorro", "cabra", "carneiro", "camelo", "cobra", "coelho", "cavalo", "elefante", "galo", "gato", "jacare", "leao", "macaco", "porco", "pavao", "peru", "touro", "tigre", "urso", "veado", "vaca"};
@@ -1405,7 +1410,7 @@ void bicho()
         for (int i = 0; i < 25; i++)
         {
             num = (i + 1) * 4;
-            if (numeros_sorteados[0] % 100 >= (num - 3) && numeros_sorteados[0] % 100 <= (num % 100) && strcmp(animal[0], animais[i]) == 0)
+            if (numeros_sorteados[0] % 100 >= (num - 3) && numeros_sorteados[0] % 100 <= (num % 100) && strncmp(animal[0], animais[i], 3) == 0)
             {
                 contador_acerto++;
             }
@@ -1425,11 +1430,13 @@ void bicho()
         {                                            // se a condição acima for realizada, vai incrementar na contadora e se for 1 mostrar se ganhou ou n
             cliente[i_atual].saldo += (aposta * 18); // vai adicionar ao saldo o valor da aposta * 18
             printf("\nVoce ganhou %.2f ETC apostando no(a) %s\n", aposta * 18, animal[0]);
+            valorFinal = aposta * 18;
         }
         else
         {
             cliente[i_atual].saldo -= aposta; // o saldo vai diminuir do valor da aposta
             printf("\nVoce perdeu, mais sorte na proxima\n");
+            valorFinal = 0;
         }
         break;
     case 2:
@@ -1442,7 +1449,7 @@ void bicho()
                 for (int k = 0; k < 25; k++)
                 {
                     num = (k + 1) * 4;
-                    if (numeros_sorteados[i] % 100 >= (num - 3) && numeros_sorteados[i] % 100 <= (num % 100) && strcmp(animal[j], animais[k]) == 0)
+                    if (numeros_sorteados[i] % 100 >= (num - 3) && numeros_sorteados[i] % 100 <= (num % 100) && strncmp(animal[j], animais[k], 3) == 0)
                     {
                         contador_acerto++;
                     }
@@ -1455,21 +1462,25 @@ void bicho()
         { // se o contador tiver apenas 1 e na escolha tiver escolhido para apostar em 1 bixo
             cliente[i_atual].saldo += (aposta * 3.6);
             printf("\nVoce ganhou %.2f ETC apostando no(a) %s\n", aposta * 3.6, animal[0]);
+            valorFinal = aposta * 3.6;
         }
         else if (contador_acerto == 2 && escolhaBicho == 2)
         { // se o contador tiver apenas 2 e na escolha tiver escolhido para apostar em 2 bixo
             cliente[i_atual].saldo += (aposta * 18.5);
             printf("\nVoce ganhou %.2f ETC apostando no(a) %s e %s\n", aposta * 18.5, animal[0], animal[1]);
+            valorFinal = aposta * 18.5;
         }
         else if (contador_acerto == 3 && escolhaBicho == 3)
         { // se o contador tiver apenas 3 e na escolha tiver escolhido para apostar em 3 bixo
             cliente[i_atual].saldo += (aposta * 130);
             printf("\nVoce ganhou %.2f ETC apostando no(a) %s, %s e %s\n", aposta * 130, animal[0], animal[1]);
+            valorFinal = aposta * 130;
         }
         else
         {
             cliente[i_atual].saldo -= aposta;
             printf("\nVoce perdeu, mais sorte na proxima\n");
+            valorFinal = 0;
         }
         break;
     default:
@@ -1477,7 +1488,7 @@ void bicho()
         pausar();
         bicho();
     }
-
+    notaFiscal("Jogo do bicho", false, 0, valorFinal);
     pausar();
     investimento();
 }
