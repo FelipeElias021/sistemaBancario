@@ -953,7 +953,7 @@ void ted()
     printf("> Saldo disponivel em sua conta R$ %.2f\n", cliente[i_atual].saldo);
     printf("> Informe o valor a ser transferido: ");
     scanf("%f", &valort);
-    if (valort < cliente[i_atual].saldo && valort > 0)
+    if (valort <= cliente[i_atual].saldo && valort > 0)
     {
         setbuf(stdin, NULL);
         printf("> Informe o nome:");
@@ -975,7 +975,6 @@ void ted()
             {
                 // informar todas as pessoas com esse nome que tem conta no banco
                 flag1 = true;
-                cliente[i].nome[0] = toupper(cliente[i].nome[0]);
                 printf("%d-%s", i + 1, cliente[i].nome);
                 printf("%d\n", cliente[i].conta);
             }
@@ -991,7 +990,6 @@ void ted()
             // finalizar a transferencia e gerar o comprovante
             pedirSenha4();
             system("cls");
-            cliente[n - 1].nome[0] = toupper(cliente[n - 1].nome[0]);
             printf("\n> Transferencia realizada com sucesso.\n");
             printf("\n  -- Comprovante --\n");
             printf("Enviada para %s", cliente[n - 1].nome);
