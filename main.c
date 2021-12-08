@@ -6,7 +6,7 @@
 #include <conio.h>
 #include <ctype.h>
 #include <stdbool.h>
-//#include <pthread.h>
+#include <pthread.h>
 #define TAXA_FIXA 1.5
 #define TEMPO 60
 
@@ -18,8 +18,8 @@ void investimento();
 float resgatarDinheiro(float investimentoMisto, char tipo);
 void bicho();
 void deposito();
-// void *fixa(void *arg);
-// void *variavel(void *arg);
+void *fixa(void *arg);
+void *variavel(void *arg);
 void configuracao();
 void pix();
 void minhas_chaves();
@@ -48,8 +48,8 @@ struct dados_cliente
 
 // Variaveis Globais - Felipe
 struct dados_cliente cliente[10];
-// pthread_t newthread1;
-// pthread_t newthread2; // criando o pthread
+pthread_t newthread1;
+pthread_t newthread2; // criando o pthread
 float taxa, risco; // variaveis para o investimeto renda variavel
 int i_atual = 0, nClientes = 0, cicloRendaVar = 0;
 bool mostrarRenda = true, flagFixa, flagVariavel;
@@ -280,12 +280,12 @@ void login()
         if (cliente[i_atual].investimentoVar > 0)
         {
             flagVariavel = true;
-            // pthread_create(&newthread1, NULL, variavel, NULL); // continuar o investimento se ele for maior que 0
+            pthread_create(&newthread1, NULL, variavel, NULL); // continuar o investimento se ele for maior que 0
         }
         if (cliente[i_atual].investimentoFix > 0)
         {
             flagFixa = true;
-            // pthread_create(&newthread2, NULL, fixa, NULL); // continuar o investimento se ele for maior que 0
+            pthread_create(&newthread2, NULL, fixa, NULL); // continuar o investimento se ele for maior que 0
         }
 
         menu(); // leva ao menu
@@ -1151,7 +1151,7 @@ void investimento()
         cicloRendaVar = 0; // Como está investindo denovo, a contagem para diminuição de impostos é zerada
 
         flagVariavel = true;
-        // pthread_create(&newthread1, NULL, variavel, NULL); // chama a pthread fixa
+        pthread_create(&newthread1, NULL, variavel, NULL); // chama a pthread fixa
         break;
     case 2:
         printf("\nQual o valor do investimento?\n");
@@ -1168,7 +1168,7 @@ void investimento()
         cliente[i_atual].saldo -= valor_investido;
         cliente[i_atual].investimentoFix += valor_investido; // adicionar o valor na variavel investimentoFix
         flagFixa = true;                                     // tornar a flag true
-        // pthread_create(&newthread2, NULL, fixa, NULL);       // chama a pthread fixa
+        pthread_create(&newthread2, NULL, fixa, NULL);       // chama a pthread fixa
         break;
     case 3:
         // resgatarDinheiro();
@@ -1204,12 +1204,12 @@ void investimento()
         if (cliente[i_atual].investimentoFix > 0)
         {
             flagFixa = true;
-            // pthread_create(&newthread2, NULL, fixa, NULL); // se o valor investido ainda for maior que 0, ele continua
+            pthread_create(&newthread2, NULL, fixa, NULL); // se o valor investido ainda for maior que 0, ele continua
         }
         if (cliente[i_atual].investimentoVar > 0)
         {
             flagVariavel = true;
-            // pthread_create(&newthread1, NULL, variavel, NULL); // continuar o investimento se ele for maior que 0
+            pthread_create(&newthread1, NULL, variavel, NULL); // continuar o investimento se ele for maior que 0
         }
         else if (cliente[i_atual].investimentoVar == 0)
         { // se o investimento estiver zerado, seu ciclo é reiniciado
@@ -1246,7 +1246,7 @@ void investimento()
     investimento();
 }
 
-/*void *variavel(void *arg)
+void *variavel(void *arg)
 {
     int aleatorio;
     srand(time(NULL));
@@ -1269,7 +1269,7 @@ void investimento()
         }
         /*Ex:
         Se a taxa for 30, tem 70% do numero aleatorio for maior que o risco
-        Se a taxa for 60, tem 40% do numero aleatorio for maior que o risco
+        Se a taxa for 60, tem 40% do numero aleatorio for maior que o risco*/
 
 
         if (cliente[i_atual].investimentoVar < 0.001)
@@ -1298,7 +1298,7 @@ void *fixa(void *arg)
     }
 
     return NULL;
-}*/
+}
 
 float resgatarDinheiro(float investimentoMisto, char tipo)
 {
